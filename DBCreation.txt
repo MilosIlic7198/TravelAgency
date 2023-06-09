@@ -1,0 +1,81 @@
+use travelagency;
+
+CREATE TABLE blog (
+id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+naslov VARCHAR(100) NOT NULL,
+opis VARCHAR(1000) NOT NULL,
+status ENUM('Objavljeno','U pripremi','Arhivirano') NOT NULL,
+datumivreme_kreiranja DATETIME NOT NULL,
+datumivreme_objavljivanja DATETIME NULL,
+datumivreme_arhiviranja DATETIME NULL,
+type ENUM('Vest','Post') NOT NULL,
+autor_id INT NOT NULL,
+CHECK (status IN ('Objavljeno','U pripremi','Arhivirano')),
+CHECK (type IN ('Vest','Post')),
+FOREIGN KEY(autor_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE users (
+id INT PRIMARY KEY NOT NULL,
+ime VARCHAR(20) NOT NULL,
+prezime VARCHAR(20) NOT NULL,
+email VARCHAR(50) NOT NULL,
+password VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE user_role (
+id INT PRIMARY KEY NOT NULL,
+user_id INT NOT NULL,
+role_id INT NOT null,
+FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE,
+FOREIGN KEY(role_id) REFERENCES role(id)
+);
+
+CREATE TABLE role (
+id INT PRIMARY KEY NOT NULL,
+role_ime VARCHAR(9) NOT NULL
+);
+
+CREATE TABLE polise (
+id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+vrsta_polise VARCHAR(50) NOT NULL,
+opis_polise VARCHAR(200) NOT NULL,
+nosilac_ime VARCHAR(20) NOT NULL,
+nosilac_prezime VARCHAR(20) NOT NULL,
+nosilac_telefon VARCHAR(11) NOT NULL,
+datum_od DATE NOT NULL,
+datum_do DATE NOT NULL
+);
+
+CREATE TABLE ucesnici (
+polise_id INT NOT NULL,
+ime VARCHAR(20) NOT NULL,
+prezime VARCHAR(20) NOT NULL,
+datum_rodjenja DATE NOT NULL,
+FOREIGN KEY(polise_id) REFERENCES polise(id) ON DELETE CASCADE
+);
+
+INSERT INTO `users` (`id`, `ime`, `prezime`, `email`, `password`) values
+(1, 'Dule', 'Savic', 'dule@gmail.com', '$2y$10$moLgLfFP.B4Ajg4TBdvasum042udD62RZ7PXgh7eBwlFlkOQwNc4q'),
+(2, 'Mile', 'Usnic', 'mile@gmail.com', '$2y$10$RImIVqLL6JtHIi1FYoKy7uAiUW68O6zsax6U5QHdAu1BTflVliIhG'),
+(3, 'Zdravko', 'Sotra', 'zdravko@gmail.com', '$2y$10$eF7Pgrj8YzDvzbnUln3lgOze9zK1FdpdO79snbaofS0MCVV9.CzBG');
+	
+INSERT INTO `role` (`id`, `role_ime`) values
+(1, 'Admin'),
+(2, 'Moderator'),
+(3, 'Korisnik');
+
+INSERT INTO `user_role` (`id`, `user_id`, `role_id`) values
+(1, 1, 1),
+(2, 2, 2),
+(3, 3, 3);
+
+DROP TABLE users;
+DROP TABLE role;
+DROP TABLE user_role;
+DROP TABLE blog;
+DROP TABLE polise;
+DROP TABLE ucesnici;
+
+
+
