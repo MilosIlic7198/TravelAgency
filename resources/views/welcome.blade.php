@@ -1,15 +1,16 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <title>Laravel</title>
-</head>
-
-<body class="antialiased">
-    <div id="app"></div>
-</body>
-
-</html>
+@extends('layouts/app')
+@section('content')
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg">
+    <div class="navbar-nav">
+        <router-link class="nav-link" to='/' exact> Home </router-link>
+        <router-link class="nav-link" to='/get-policy'> Get Policy </router-link>
+        <router-link class="nav-link" to='/login'> Login </router-link>
+        <router-link class="nav-link" to='/register'> Register </router-link>
+        <router-link class="nav-link" to='/new-blog'> New Blog </router-link>
+        <router-link class="nav-link" to='/dashboard'> Dashboard </router-link>
+    </div>
+</nav>
+<div class="container">
+    <router-view></router-view>
+</div>
+@endsection

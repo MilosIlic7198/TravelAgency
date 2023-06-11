@@ -8,23 +8,23 @@ use Carbon\Carbon;
 
 class BlogController extends Controller
 {
-    //
-    public function show_Blogs()
-    {
-        return view('blogs');
-    }
 
     public function create_Blog(Request $request)
     {
-        //dd($request->all());
+        //dd($request->file('image'));
         $formFields = $request->validate([
-            'naslov' => ['required', 'min:6'],
-            'opis' => ['required', 'min:8'],
+            'title' => ['required', 'min:6'],
+            'description' => ['required', 'min:8'],
             'type' => ['required', 'min:2']
         ]);
+        if ($request->hasFile('image')) {
+            $formFields['image'] = $request->file('image')->store('images', 'public');
+        }
         $date = Carbon::now();
-        $blog = array_merge($formFields, ['status' => 'U pripremi', 'datumivreme_kreiranja' => $date->toDateString(), 'autor_id' => 1]);
-        Blog::create($blog);
+        $formFields['status'] = 'In preparation';
+        $formFields['creation_date'] = $date->toDateString();
+        $formFields['author_id'] = 1;
+        Blog::create($formFields);
 
         return redirect('/');
     }
