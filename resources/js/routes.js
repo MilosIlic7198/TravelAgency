@@ -4,7 +4,7 @@ import GetPolicy from "./components/GetPolicy";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import NewBlog from "./components/NewBlog";
-import DashBoard from "./components/DashBoard";
+import Dashboard from "./components/Dashboard";
 
 export default {
     mode: "history",
@@ -36,7 +36,7 @@ export default {
         },
         {
             path: "/dashboard",
-            component: DashBoard,
+            component: Dashboard,
             name: "Dashboard",
         },
     ],

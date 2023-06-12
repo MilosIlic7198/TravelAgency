@@ -3,33 +3,17 @@
         <h3 class="m-2">Login!</h3>
         <div class="m-2">
             <label for="email" class="d-block text-lg">Email address</label>
-            <input
-                type="email"
-                class="border border-gray-200 rounded p-2"
-                id="email"
-                placeholder="Enter email"
-                name="email"
-                v-model="formFields.email"
-            />
+            <input type="email" class="border border-gray-200 rounded p-2" id="email" placeholder="Enter email" name="email"
+                v-model="formFields.email" />
         </div>
         <div class="m-2">
             <label for="password" class="d-block text-lg">Password</label>
-            <input
-                type="password"
-                class="border border-gray-200 rounded p-2"
-                id="password"
-                placeholder="Password"
-                name="password"
-                v-model="formFields.password"
-            />
+            <input type="password" class="border border-gray-200 rounded p-2" id="password" placeholder="Password"
+                name="password" v-model="formFields.password" />
         </div>
 
         <div class="m-2">
-            <button
-                @click.prevent="login()"
-                type="submit"
-                class="btn btn-primary text-white rounded hover:bg-black"
-            >
+            <button @click.prevent="login()" type="submit" class="btn btn-primary">
                 Login
             </button>
         </div>
@@ -47,7 +31,7 @@ export default {
         };
     },
     methods: {
-        login() {},
+        login() { },
     },
 };
 </script>
