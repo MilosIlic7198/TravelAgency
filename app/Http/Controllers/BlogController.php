@@ -27,8 +27,13 @@ class BlogController extends Controller
         Blog::create($formFields);
     }
 
-    public function get_All_Blogs(Request $request)
+    public function get_Persons_Blogs(Request $request)
     {
         return Person::find(auth()->user()->id)->blogs()->get();
+    }
+
+    public function get_All_Blogs(Request $request)
+    {
+        return Blog::all();
     }
 }

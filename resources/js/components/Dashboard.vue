@@ -1,6 +1,6 @@
 <template>
     <div v-if="blogs.length == 0">
-        <p>No blogs! :D</p>
+        <p>You dont have blogs! :D</p>
     </div>
     <div v-else>
         <div v-for="blog in blogs">

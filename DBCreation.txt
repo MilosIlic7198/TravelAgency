@@ -19,7 +19,7 @@ FOREIGN KEY(author_id) REFERENCES person(id) ON DELETE CASCADE
 );
 
 CREATE TABLE person (
-id INT PRIMARY KEY NOT NULL,
+id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 email VARCHAR(50) NOT NULL,
 password VARCHAR(100) NOT NULL
 );
@@ -77,5 +77,7 @@ DROP TABLE blog;
 DROP TABLE insurance_policy;
 DROP TABLE participant;
 
-
-
+TRUNCATE person;
+TRUNCATE role;
+TRUNCATE person_role;
+TRUNCATE blog;
