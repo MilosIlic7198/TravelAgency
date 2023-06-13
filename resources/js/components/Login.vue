@@ -31,7 +31,17 @@ export default {
         };
     },
     methods: {
-        login() { },
+        login() {
+            axios.post('/api/login', this.formFields).then(res => {
+                const status =
+                    JSON.parse(res.status);
+                if (status == '200') {
+                    this.$router.push('/dashboard');
+                } else {
+                    this.$router.push('/login');
+                }
+            })
+        },
     },
 };
 </script>

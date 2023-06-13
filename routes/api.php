@@ -20,8 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/login', [PersonController::class, 'login']);
-
-Route::post('/create-blog', [BlogController::class, 'create_Blog']);
-
-Route::get('/get-blogs', [BlogController::class, 'get_All_Blogs']);
+Route::group(['middleware' => ['api-session']], function () {
+    Route::post('/login', [PersonController::class, 'login']);
+    Route::post('/create-blog', [BlogController::class, 'create_Blog']);
+    Route::get('/get-blogs', [BlogController::class, 'get_All_Blogs']);
+});

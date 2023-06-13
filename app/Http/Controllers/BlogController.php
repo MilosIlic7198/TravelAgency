@@ -23,12 +23,12 @@ class BlogController extends Controller
         $date = Carbon::now();
         $formFields['status'] = 'In preparation';
         $formFields['creation_date'] = $date->toDateString();
-        $formFields['author_id'] = 1;
+        $formFields['author_id'] = auth()->user()->id;
         Blog::create($formFields);
     }
 
     public function get_All_Blogs(Request $request)
     {
-        return Person::find(1)->blogs()->get();
+        return Person::find(auth()->user()->id)->blogs()->get();
     }
 }

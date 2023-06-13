@@ -18,6 +18,20 @@ class PersonController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required']
         ]);
+
+        if (auth()->attempt($formFields)) {
+            $request->session()->regenerate();
+            return response()->json([
+                'message' => 'Success',
+                'status' => 200,
+                'person' => [
+                    'id' => auth()->user()->id,
+                    'email' => auth()->user()->email
+                ]
+            ]);
+        }
+        return response('Failed', 401);
+
         //Attempt to login person by email and password, return response, success or failed!
 
 

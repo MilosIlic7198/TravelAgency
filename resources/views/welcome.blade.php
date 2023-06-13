@@ -1,16 +1,4 @@
 @extends('layouts/app')
 @section('content')
-<nav class="navbar navbar-dark bg-dark navbar-expand-lg">
-    <div class="navbar-nav">
-        <router-link class="nav-link" to='/' exact> Home </router-link>
-        <router-link class="nav-link" to='/get-policy'> Get Policy </router-link>
-        <router-link class="nav-link" to='/login'> Login </router-link>
-        <router-link class="nav-link" to='/register'> Register </router-link>
-        <router-link class="nav-link" to='/new-blog'> New Blog </router-link>
-        <router-link class="nav-link" to='/dashboard'> Dashboard </router-link>
-    </div>
-</nav>
-<div class="container">
-    <router-view></router-view>
-</div>
+<app-component :user_logged_in="{{json_encode(Auth::user())}}"></app-component>
 @endsection
