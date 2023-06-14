@@ -20,8 +20,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::middleware('auth:sanctum')->get('/authenticated', function (Request $request) {
+    return true;
+});
+
 Route::post('/login', [PersonController::class, 'login']);
 Route::post('/register', [PersonController::class, 'register']);
+Route::post('/logout', [PersonController::class, 'logout']);
 Route::post('/create-blog', [BlogController::class, 'create_Blog']);
 Route::get('/get-blogs', [BlogController::class, 'get_Persons_Blogs']);
 Route::get('/get-all-blogs', [BlogController::class, 'get_All_Blogs']);

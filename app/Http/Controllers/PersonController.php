@@ -3,10 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Person;
-use App\Models\Blog;
-use App\Models\Role;
-use App\Models\InsurancePolicy;
-use App\Models\Participant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,5 +42,10 @@ class PersonController extends Controller
             return response()->json('Failed', 401);
         }
         return response()->json('Failed', 401);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
     }
 }

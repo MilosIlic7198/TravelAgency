@@ -3,19 +3,20 @@
         <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
             <div class="navbar-nav">
                 <router-link class="nav-link" to="/" exact> Home </router-link>
-                <router-link class="nav-link" to="/get-policy">
+                <router-link v-if="person == null" class="nav-link" to="/get-policy">
                     Get Policy
                 </router-link>
-                <router-link class="nav-link" to="/login"> Login </router-link>
-                <router-link class="nav-link" to="/register">
+                <router-link v-if="person == null" class="nav-link" to="/login"> Login </router-link>
+                <router-link v-if="person == null" class="nav-link" to="/register">
                     Register
                 </router-link>
-                <router-link class="nav-link" to="/new-blog">
+                <router-link v-if="person != null" class="nav-link" to="/new-blog">
                     New Blog
                 </router-link>
-                <router-link class="nav-link" to="/dashboard">
+                <router-link v-if="person != null" class="nav-link" to="/dashboard">
                     Dashboard
                 </router-link>
+                <button v-if="person != null" class="nav-link" @click="logout()">Logout</button>
             </div>
         </nav>
         <div class="container"><router-view></router-view></div>
@@ -23,5 +24,27 @@
 </template>
 
 <script>
-export default {};
+import axios from 'axios';
+
+export default {
+    data() {
+        return {
+            person: null,
+        };
+    },
+    methods: {
+        logout() {
+            axios.post('/api/logout').then(() => {
+                this.$router
+                    .push('/')
+                    .then(() => { this.$router.go() })
+            })
+        }
+    },
+    mounted() {
+        axios.get('/api/user').then((res) => {
+            this.person = res.data;
+        })
+    }
+};
 </script>
