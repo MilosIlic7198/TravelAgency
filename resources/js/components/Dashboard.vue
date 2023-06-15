@@ -1,43 +1,21 @@
 <template>
-    <div v-if="blogs.length == 0">
-        <p>You dont have blogs! :D</p>
-    </div>
-    <div v-else>
-        <table class="table" id="datatable">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Image</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Type</th>
-                    <th>Creation</th>
-                    <th>Archiving</th>
-                    <th>Publication</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="blog in blogs" :key="blog.id">
-                    <td>{{ blog.title }}</td>
-                    <td><img :src="'/storage/' + blog.image" alt="" class="img-thumbnail"></td>
-                    <td>{{ blog.description }}</td>
-                    <td>{{ blog.status }}</td>
-                    <td>{{ blog.type }}</td>
-                    <td>{{ blog.creation_date }}</td>
-                    <td>{{ blog.archiving_date }}</td>
-                    <td>{{ blog.publication_date }}</td>
-                    <td>
-                        <button @click="blogOverview(blog.id)" class="btn btn-primary btn-sm m-1">Overview</button>
-                        <button @click="editBlog(blog.id)" class="btn btn-success btn-sm m-1">Edit</button>
-                        <button @click="deleteBlog(blog.id)" class="btn btn-danger btn-sm m-1">Delete</button>
-                        <button @click="publishBlog(blog.id)" class="btn btn-info btn-sm m-1">Publish</button>
-                        <button @click="archiveBlog(blog.id)" class="btn btn-dark btn-sm m-1">Archive</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <table class="table" id="datatable">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Image</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Type</th>
+                <th>Creation</th>
+                <th>Archiving</th>
+                <th>Publication</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </template>
 
 <script>
@@ -47,49 +25,96 @@ import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import axios from "axios";
 import $ from "jquery";
+import moment from "moment";
 export default {
     data() {
         return {
-            blogs: [],
+            columns: [
+                { "data": "title" },
+                {
+                    "data": "image",
+                    "render": function (data, type, row, meta) {
+                        return '<img src="/storage/' + data + '" class="img-thumbnail"">';
+                    },
+                },
+                { "data": "description" },
+                { "data": "status" },
+                { "data": "type" },
+                {
+                    "data": "creation_date",
+                    "render": function (data, type, row, meta) {
+                        return moment(data).format("DD.MM.YYYY HH:mm:ss a");
+                    }
+                },
+                { "data": "archiving_date" },
+                { "data": "publication_date" },
+                {
+                    "data": null,
+                    "render": function (data, type, row, meta) {
+                        return `<div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Actions!
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" id="overview" href="#" data-id=${data.id}>Overview</a></li>
+                                <li><a class="dropdown-item" id="edit" href="#" data-id=${data.id}>Edit</a></li>
+                                <li><a class="dropdown-item" id="delete" href="#" data-id=${data.id}>Delete</a></li>
+                                <li><a class="dropdown-item" id="publish" href="#" data-id=${data.id}>Publish</a></li>
+                                <li><a class="dropdown-item" id="archive" href="#" data-id=${data.id}>Archive</a></li>
+                            </ul>
+                            </div>`;
+                    }
+                },
+            ],
+            columnDefs: [
+                { "targets": 0, "orderable": true },
+                { "targets": 1, "orderable": false, "searchable": false },
+                { "targets": 2, "orderable": true },
+                { "targets": 3, "orderable": true },
+                { "targets": 4, "orderable": true },
+                { "targets": 5, "orderable": true },
+                { "targets": 6, "orderable": true },
+                { "targets": 7, "orderable": true },
+            ]
         };
     },
     methods: {
-        blogOverview(id) {
-            console.log(id)
+        initTable() {
+            let table = this
+            $('#datatable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "destroy": true,
+                "columns": table.columns,
+                "columnsDefs": table.columnDefs,
+                "ajax": {
+                    url: '/api/get-blogs',
+                    type: 'GET',
+                },
+            });
         },
-        editBlog(id) {
-            console.log(id)
-        },
-        deleteBlog(id) {
-            console.log(id)
-        },
-        publishBlog(id) {
-            console.log(id)
-        },
-        archiveBlog(id) {
-            console.log(id)
-        },
+        bindButtons() {
+            let body = $("#datatable tbody");
+            body.on('click', '#overview', function (e) {
+                console.log(e.target.dataset.id);
+            })
+            body.on('click', '#edit', function (e) {
+                console.log(e.target.dataset.id);
+            })
+            body.on('click', '#delete', function (e) {
+                console.log(e.target.dataset.id);
+            })
+            body.on('click', '#publish', function (e) {
+                console.log(e.target.dataset.id);
+            })
+            body.on('click', '#archive', function (e) {
+                console.log(e.target.dataset.id);
+            })
+        }
     },
     mounted() {
-        axios.get('/api/get-blogs').then((res) => {
-            const status =
-                JSON.parse(res.status);
-            if (status == '200') {
-                this.blogs = res.data;
-                this.blogs = this.blogs.map(blog =>
-                    'id: ' + blog.id +
-                    'title: ' + blog.title +
-                    'description: ' + blog.description +
-                    'status: ' + blog.status +
-                    'type: ' + blog.type +
-                    'creation_date: ' + blog.creation_date.toLocaleDateString('de-CH') +
-                    'archiving_date: ' + blog.archiving_date +
-                    'publication_date: ' + blog.publication_date);
-                $(document).ready(function () {
-                    $('#datatable').DataTable();
-                });
-            }
-        });
+        this.initTable();
+        this.bindButtons();
     },
 };
 </script>

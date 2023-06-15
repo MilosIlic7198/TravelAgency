@@ -19,7 +19,7 @@
                 <button v-if="person != null" class="nav-link" @click="logout()">Logout</button>
             </div>
         </nav>
-        <div class="container"><router-view></router-view></div>
+        <div class="container d-flex justify-content-center"><router-view></router-view></div>
     </div>
 </template>
 

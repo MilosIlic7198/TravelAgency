@@ -22,14 +22,19 @@ class BlogController extends Controller
         }
         $date = Carbon::now();
         $formFields['status'] = 'In preparation';
-        $formFields['creation_date'] = $date->toDateString();
+        $formFields['creation_date'] = $date->toDateTimeString();
         $formFields['author_id'] = auth()->user()->id;
         Blog::create($formFields);
     }
 
     public function get_Persons_Blogs(Request $request)
     {
-        return Person::find(auth()->user()->id)->blogs()->get();
+        return [
+            "draw" => $request->draw,
+            "recordsTotal" => $request->recordsTotal,
+            "recordsFiltered" =>  $request->recordsFiltered,
+            "data" => Person::find(auth()->user()->id)->blogs()->get()->toArray(),
+        ];
     }
 
     public function get_All_Blogs(Request $request)
