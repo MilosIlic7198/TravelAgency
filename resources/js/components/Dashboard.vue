@@ -35,7 +35,7 @@ export default {
                     "data": "image",
                     "render": function (data, type, row, meta) {
                         return '<img src="/storage/' + data + '" class="img-thumbnail"">';
-                    },
+                    }, "orderable": false, "searchable": false
                 },
                 { "data": "description" },
                 { "data": "status" },
@@ -44,10 +44,10 @@ export default {
                     "data": "creation_date",
                     "render": function (data, type, row, meta) {
                         return moment(data).format("DD.MM.YYYY HH:mm:ss a");
-                    }
+                    }, "orderable": false, "searchable": false
                 },
-                { "data": "archiving_date" },
-                { "data": "publication_date" },
+                { "data": "archiving_date", "orderable": false, "searchable": false },
+                { "data": "publication_date", "orderable": false, "searchable": false },
                 {
                     "data": null,
                     "render": function (data, type, row, meta) {
@@ -63,30 +63,24 @@ export default {
                                 <li><a class="dropdown-item" id="archive" href="#" data-id=${data.id}>Archive</a></li>
                             </ul>
                             </div>`;
-                    }
+                    }, "orderable": false, "searchable": false
                 },
             ],
-            columnDefs: [
-                { "targets": 0, "orderable": true },
-                { "targets": 1, "orderable": false, "searchable": false },
-                { "targets": 2, "orderable": true },
-                { "targets": 3, "orderable": true },
-                { "targets": 4, "orderable": true },
-                { "targets": 5, "orderable": true },
-                { "targets": 6, "orderable": true },
-                { "targets": 7, "orderable": true },
-            ]
         };
     },
     methods: {
+        drawTable() {
+            $('#datatable').DataTable().clear().draw();
+        },
         initTable() {
             let table = this
             $('#datatable').DataTable({
+                "stateSave": true,
                 "processing": true,
                 "serverSide": true,
                 "destroy": true,
+                "lengthMenu": [2, 5, 10, 15, 20],
                 "columns": table.columns,
-                "columnsDefs": table.columnDefs,
                 "ajax": {
                     url: '/api/get-blogs',
                     type: 'GET',
@@ -94,7 +88,8 @@ export default {
             });
         },
         bindButtons() {
-            let body = $("#datatable tbody");
+            let table = this;
+            let body = $(document);
             body.on('click', '#overview', function (e) {
                 console.log(e.target.dataset.id);
             })
@@ -102,7 +97,18 @@ export default {
                 console.log(e.target.dataset.id);
             })
             body.on('click', '#delete', function (e) {
-                console.log(e.target.dataset.id);
+                axios.post(`/api/delete-blog/${e.target.dataset.id}`).then((res) => {
+                    if (res.status == 200 && res.data == "Success") {
+                        table.drawTable();
+                        table.initTable();
+                    } else if (res.status == 500 && res.data == "Records not found!") {
+                        alert("Records not found!");
+                    } else if (res.status == 500 && res.data == "Bad query!") {
+                        alert("Bad query!");
+                    } else if (res.status == 500 && res.data == "General exception!") {
+                        alert("General exception!");
+                    }
+                });
             })
             body.on('click', '#publish', function (e) {
                 console.log(e.target.dataset.id);
