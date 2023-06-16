@@ -1,45 +1,101 @@
 <template>
     <form>
         <div class="m-2">
-            <label for="forFirstName" class="d-block text-lg">Holders first name</label>
-            <input type="text" class="border border-gray-200 rounded p-2" id="forFirstName" placeholder="Enter first name"
-                name="firstName" />
+            <label for="forFirstName" class="d-block text-lg"
+                >Holders first name</label
+            >
+            <input
+                type="text"
+                class="border border-gray-200 rounded p-2"
+                id="forFirstName"
+                placeholder="Enter first name"
+                name="firstName"
+                v-model="policy.holdersFirstName"
+            />
         </div>
         <div class="m-2">
-            <label for="forLastName" class="d-block text-lg">Holders last name</label>
-            <input type="text" class="border border-gray-200 rounded p-2" id="forLastName" placeholder="Enter last name"
-                name="lastName" />
+            <label for="forLastName" class="d-block text-lg"
+                >Holders last name</label
+            >
+            <input
+                type="text"
+                class="border border-gray-200 rounded p-2"
+                id="forLastName"
+                placeholder="Enter last name"
+                name="lastName"
+                v-model="policy.holdersLastName"
+            />
         </div>
         <div class="form-check m-2">
-            <input class="form-check-input" type="radio" name="policyType" id="forIndividual" v-model="showFirst"
-                :value="false" />
-            <label class="form-check-label" for="forIndividual">Individual</label>
+            <input
+                class="form-check-input"
+                type="radio"
+                name="policyType"
+                id="forIndividual"
+                @change="forIndividual()"
+                :checked="showForm == false"
+            />
+            <label class="form-check-label" for="forIndividual"
+                >Individual</label
+            >
         </div>
         <div class="form-check m-2">
-            <input class="form-check-input" type="radio" name="policyType" id="forGroup" v-model="showFirst"
-                :value="true" />
+            <input
+                class="form-check-input"
+                type="radio"
+                name="policyType"
+                id="forGroup"
+                @change="forGroup()"
+            />
             <label class="form-check-label" for="forGroup">Group</label>
         </div>
-        <div v-if="showFirst">
-            <div v-for="key in count" :key="key">
+        <div v-if="showForm">
+            <div v-for="(participant, index) in policy.participants">
                 <div class="m-2">
-                    <label class="d-block text-lg">Participant first name</label>
-                    <input v-model="participants['firstName' + key]" type="text" class="border border-gray-200 rounded p-2"
-                        :id="key" placeholder="Enter first name" name="participantFirstName" />
+                    <label for="forParticipant" class="d-block text-lg"
+                        >Participant first name</label
+                    >
+                    <input
+                        type="text"
+                        class="border border-gray-200 rounded p-2"
+                        id="forParticipant"
+                        placeholder="Enter first name"
+                        name="participantFirstName"
+                        v-model="participant.firstName"
+                    />
                 </div>
                 <div class="m-2">
-                    <label class="d-block text-lg">Participant last name</label>
-                    <input v-model="participants['lastName' + key]" type="text" class="border border-gray-200 rounded p-2"
-                        :id="key" placeholder="Enter last name" name="participantLastName" />
+                    <label for="forParticipant" class="d-block text-lg"
+                        >Participant last name</label
+                    >
+                    <input
+                        type="text"
+                        class="border border-gray-200 rounded p-2"
+                        id="forParticipant"
+                        placeholder="Enter last name"
+                        name="participantLastName"
+                        v-model="participant.lastName"
+                    />
+                </div>
+                <div class="m-2">
+                    <button
+                        @click.prevent="remove(index)"
+                        class="btn btn-danger btn-sm"
+                    >
+                        Remove
+                    </button>
                 </div>
             </div>
             <div class="m-2">
-                <a href="#" class="m-1" id="addFields" @click="add()"><i class="fa fa-plus"></i></a>
-                <a href="#" class="m-1" id="removeFields" @click="remove()"><i class="fa fa-minus"></i></a>
+                <button @click.prevent="add()" class="btn btn-success btn-sm">
+                    Add
+                </button>
             </div>
         </div>
         <div class="m-2">
-            <button @click.prevent="submit()" class="btn btn-success">Show Values!</button>
+            <button @click.prevent="submit()" class="btn btn-primary">
+                Submit
+            </button>
         </div>
     </form>
 </template>
@@ -48,24 +104,49 @@
 export default {
     data() {
         return {
-            showFirst: null,
-            count: 1,
-            participants: [],
+            showForm: false,
+            policy: {
+                holdersFirstName: "",
+                holdersLastName: "",
+                type: null,
+                participants: [
+                    {
+                        firstName: "",
+                        lastName: "",
+                    },
+                ],
+            },
         };
     },
     methods: {
-        add() {
-            this.count++;
+        forIndividual() {
+            this.policy.type = "Individual";
+            this.showForm = false;
         },
-        remove() {
-            this.count--;
-
+        forGroup() {
+            this.policy.type = "Group";
+            this.showForm = true;
+        },
+        add() {
+            this.policy.participants.push({
+                firstName: "",
+                lastName: "",
+            });
+        },
+        remove(index) {
+            this.policy.participants.splice(index, 1);
         },
         submit() {
-            for (var key of Object.keys(this.participants)) {
-                console.log(key + " -> " + this.participants[key])
+            if (this.policy.type == "Individual") {
+                this.policy.participants = [
+                    {
+                        firstName: "",
+                        lastName: "",
+                    },
+                ];
             }
-        }
-    }
+            console.log(this.policy);
+        },
+    },
 };
 </script>
