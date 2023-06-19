@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\InsurancePolicyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,8 @@ Route::post('/logout', [PersonController::class, 'logout']);
 Route::post('/create-blog', [BlogController::class, 'create_Blog']);
 Route::get('/get-blogs', [BlogController::class, 'get_Persons_Blogs']);
 Route::get('/get-all-blogs', [BlogController::class, 'get_All_Blogs']);
+Route::get('/get-all-policies', [InsurancePolicyController::class, 'get_All_Policies']);
+Route::post('/buy-policy', [InsurancePolicyController::class, 'create_Policy']);
 Route::get('/get-blog/{id}', [BlogController::class, 'get_Blog']);
 Route::post('/edit-blog/{id}', [BlogController::class, 'edit_Blog']);
 Route::post('/delete-blog/{id}', [BlogController::class, 'delete_Blog']);

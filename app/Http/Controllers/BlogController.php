@@ -102,10 +102,14 @@ class BlogController extends Controller
 
     public function archive_Blog(Request $request, $id)
     {
-        $date = Carbon::now();
         $blog = Blog::find($id);
-        $blog->archiving_date = $date->toDateTimeString();
-        $blog->status = "Archived";
-        $blog->save();
+        if ($blog->status == "Published") {
+            $date = Carbon::now();
+            $blog->archiving_date = $date->toDateTimeString();
+            $blog->status = "Archived";
+            $blog->save();
+        } else {
+            return response(["message" => "You cannot archive if you did not publish first!"], 400);
+        }
     }
 }

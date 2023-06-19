@@ -173,6 +173,8 @@ export default {
                         if (status == "200") {
                             table.drawTable();
                         }
+                    }).catch(error => {
+                        alert(error.response.data.message);
                     });
             });
         },

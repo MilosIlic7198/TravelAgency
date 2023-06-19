@@ -7,7 +7,7 @@
                     Get Policy
                 </router-link>
                 <router-link v-if="person == null" class="nav-link" to="/login"> Login </router-link>
-                <router-link v-if="person == null" class="nav-link" to="/register">
+                <router-link v-if="person != null" class="nav-link" to="/register">
                     Register
                 </router-link>
                 <router-link v-if="person != null" class="nav-link" to="/new-blog">
@@ -16,10 +16,13 @@
                 <router-link v-if="person != null" class="nav-link" to="/dashboard">
                     Dashboard
                 </router-link>
+                <router-link v-if="person != null" class="nav-link" to="/insurance-policies">
+                    Insurance Policies
+                </router-link>
                 <button v-if="person != null" class="nav-link" @click="logout()">Logout</button>
             </div>
         </nav>
-        <div class="container d-flex justify-content-center"><router-view></router-view></div>
+        <div class="container d-flex justify-content-center"><router-view :key="$route.fullPath"></router-view></div>
     </div>
 </template>
 

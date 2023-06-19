@@ -7,6 +7,7 @@ import NewBlog from "./components/NewBlog";
 import Dashboard from "./components/Dashboard";
 import Overview from "./components/Overview";
 import Edit from "./components/Edit";
+import InsurancePolicies from "./components/InsurancePolicies";
 
 export default {
     mode: "history",
@@ -40,6 +41,11 @@ export default {
             path: "/dashboard",
             component: Dashboard,
             name: "Dashboard",
+        },
+        {
+            path: "/insurance-policies",
+            component: InsurancePolicies,
+            name: "InsurancePolicies",
         },
         {
             path: "/overview/:id",

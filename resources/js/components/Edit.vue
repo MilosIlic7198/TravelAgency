@@ -3,48 +3,29 @@
         <h3 class="m-2">Edit!</h3>
         <div class="m-2">
             <label for="title" class="d-block text-lg">Title:</label>
-            <input
-                type="text"
-                class="border border-gray-200 rounded p-2"
-                name="title"
-                v-model="blog.title"
-            />
+            <input type="text" class="border border-gray-200 rounded p-2" name="title" v-model="blog.title" />
         </div>
         <div class="m-2">
             <label for="image" class="d-block text-lg"> Image: </label>
-            <img
-                :src="imageUrl == null ? /storage/ + blog.image : imageUrl"
-                class="img-thumbnail"
-            />
+            <img :src="imageUrl == null ? /storage/ + blog.image : imageUrl" class="img-thumbnail" />
         </div>
         <div class="m-2">
-            <input
-                type="file"
-                class="border border-gray-200 rounded p-2"
-                name="image"
-                @change="imageSelected($event)"
-            />
+            <input type="file" class="border border-gray-200 rounded p-2" name="image" @change="imageSelected($event)" />
         </div>
         <div class="m-2">
-            <label for="description" class="d-block text-lg"
-                >Description:</label
-            >
+            <label for="description" class="d-block text-lg">Description:</label>
             <vue-editor v-model="blog.description" />
         </div>
         <div class="m-2">
             <label for="type" class="d-block text-lg">Type:</label>
-            <select
-                class="border border-gray-200 rounded p-2"
-                name="type"
-                v-model="blog.type"
-            >
+            <select class="border border-gray-200 rounded p-2" name="type" v-model="blog.type">
                 <option value="News">News</option>
                 <option value="Post">Post</option>
             </select>
         </div>
         <div class="m-2">
             <button @click.prevent="edit()" class="btn btn-primary">
-                Edit
+                Save
             </button>
             <button @click.prevent="cancel()" class="btn btn-secondary">
                 Cancel
