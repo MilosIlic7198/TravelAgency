@@ -3,10 +3,10 @@
         <p>No new blogs! :D</p>
     </div>
     <div v-else>
-        <div v-for="blog in blogs">
+        <div class="m-2" v-for="blog in blogs">
             <h3>Title: {{ blog.title }}</h3>
             <img :src="'/storage/' + blog.image" alt="" class="img-thumbnail" />
-            <p>Description: {{ blog.description }}</p>
+            <p>Description: <span v-html="blog.description"></span></p>
             <p>Creation date: {{ blog.creation_date }}</p>
             <hr />
         </div>

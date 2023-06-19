@@ -5,6 +5,8 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import NewBlog from "./components/NewBlog";
 import Dashboard from "./components/Dashboard";
+import Overview from "./components/Overview";
+import Edit from "./components/Edit";
 
 export default {
     mode: "history",
@@ -38,6 +40,16 @@ export default {
             path: "/dashboard",
             component: Dashboard,
             name: "Dashboard",
+        },
+        {
+            path: "/overview/:id",
+            component: Overview,
+            name: "Overview",
+        },
+        {
+            path: "/edit/:id",
+            component: Edit,
+            name: "Edit",
         },
     ],
 };

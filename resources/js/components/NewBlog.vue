@@ -14,12 +14,7 @@
             <label for="description" class="d-block text-lg"
                 >Description:</label
             >
-            <textarea
-                class="border border-gray-200 rounded p-2"
-                name="description"
-                rows="10"
-                v-model="formFields.description"
-            ></textarea>
+            <vue-editor v-model="formFields.description"/>
         </div>
         <div class="m-2">
             <label for="image" class="d-block text-lg"> Image: </label>

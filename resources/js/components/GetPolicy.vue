@@ -1,8 +1,9 @@
 <template>
     <form>
+        <h3 class="m-2">Get Policy!</h3>
         <div class="m-2">
             <label for="forFirstName" class="d-block text-lg"
-                >Holders first name</label
+                >Holders first name:</label
             >
             <input
                 type="text"
@@ -15,7 +16,7 @@
         </div>
         <div class="m-2">
             <label for="forLastName" class="d-block text-lg"
-                >Holders last name</label
+                >Holders last name:</label
             >
             <input
                 type="text"
@@ -25,6 +26,30 @@
                 name="lastName"
                 v-model="policy.holdersLastName"
             />
+        </div>
+        <div class="m-2">
+            <label for="forPhoneNumber" class="d-block text-lg"
+                >Holders phone number:</label
+            >
+            <input
+                type="text"
+                class="border border-gray-200 rounded p-2"
+                id="forPhoneNumber"
+                placeholder="Enter phone number"
+                name="phoneNumber"
+                v-model="policy.holdersPhoneNumber"
+            />
+        </div>
+        <div class="m-2">
+            <label for="description" class="d-block text-lg">
+                Description:
+            </label>
+            <textarea
+                class="border border-gray-200 rounded p-2"
+                name="description"
+                rows="10"
+                v-model="this.policy.description"
+            ></textarea>
         </div>
         <div class="form-check m-2">
             <input
@@ -53,7 +78,7 @@
             <div v-for="(participant, index) in policy.participants">
                 <div class="m-2">
                     <label for="forParticipant" class="d-block text-lg"
-                        >Participant first name</label
+                        >Participant first name:</label
                     >
                     <input
                         type="text"
@@ -66,7 +91,7 @@
                 </div>
                 <div class="m-2">
                     <label for="forParticipant" class="d-block text-lg"
-                        >Participant last name</label
+                        >Participant last name:</label
                     >
                     <input
                         type="text"
@@ -106,9 +131,11 @@ export default {
         return {
             showForm: false,
             policy: {
+                type: null,
+                description: "",
                 holdersFirstName: "",
                 holdersLastName: "",
-                type: null,
+                holdersPhoneNumber: "",
                 participants: [
                     {
                         firstName: "",

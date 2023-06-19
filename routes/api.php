@@ -30,4 +30,8 @@ Route::post('/logout', [PersonController::class, 'logout']);
 Route::post('/create-blog', [BlogController::class, 'create_Blog']);
 Route::get('/get-blogs', [BlogController::class, 'get_Persons_Blogs']);
 Route::get('/get-all-blogs', [BlogController::class, 'get_All_Blogs']);
+Route::get('/get-blog/{id}', [BlogController::class, 'get_Blog']);
+Route::post('/edit-blog/{id}', [BlogController::class, 'edit_Blog']);
 Route::post('/delete-blog/{id}', [BlogController::class, 'delete_Blog']);
+Route::post('/publish-blog/{id}', [BlogController::class, 'publish_Blog']);
+Route::post('/archive-blog/{id}', [BlogController::class, 'archive_Blog']);

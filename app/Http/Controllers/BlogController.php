@@ -50,7 +50,31 @@ class BlogController extends Controller
 
     public function get_All_Blogs(Request $request)
     {
-        return Blog::all();
+        return Blog::where("status", "Published")->get();
+    }
+
+    public function get_Blog(Request $request, $id)
+    {
+        return Blog::find($id);
+    }
+
+    public function edit_Blog(Request $request, $id)
+    {
+        $formFields = $request->validate([
+            'title' => ['required', 'min:6'],
+            'description' => ['required', 'min:8'],
+            'type' => ['required', 'min:2']
+        ]);
+        $formFields['image'] = $request->image;
+        if ($request->hasFile('imageFile')) {
+            $formFields['image'] = $request->file('imageFile')->store('images', 'public');
+        }
+        $blog = Blog::find($id);
+        $blog->title = $formFields['title'];
+        $blog->image = $formFields['image'];
+        $blog->description = $formFields['description'];
+        $blog->type = $formFields['type'];
+        $blog->save();
     }
 
     public function delete_Blog(Request $request, $id)
@@ -65,5 +89,23 @@ class BlogController extends Controller
         } catch (Exception $e) {
             return response()->json("General exception!", 500);
         }
+    }
+
+    public function publish_Blog(Request $request, $id)
+    {
+        $date = Carbon::now();
+        $blog = Blog::find($id);
+        $blog->publication_date = $date->toDateTimeString();
+        $blog->status = "Published";
+        $blog->save();
+    }
+
+    public function archive_Blog(Request $request, $id)
+    {
+        $date = Carbon::now();
+        $blog = Blog::find($id);
+        $blog->archiving_date = $date->toDateTimeString();
+        $blog->status = "Archived";
+        $blog->save();
     }
 }
