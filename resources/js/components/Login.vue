@@ -36,7 +36,7 @@ export default {
                 const status = JSON.parse(res.status);
                 if (status == "200") {
                     this.$router
-                        .push('/dashboard')
+                        .push('/blogs')
                         .then(() => { this.$router.go() })
                 } else {
                     this.$router.go();

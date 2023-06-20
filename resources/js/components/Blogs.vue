@@ -1,20 +1,23 @@
 <template>
-    <table class="table" id="datatable">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Image</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Type</th>
-                <th>Creation</th>
-                <th>Archiving</th>
-                <th>Publication</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <div>
+        <button class="btn btn-success my-4" @click.prevent="newBlog()">New Blog</button>
+        <table class="table" id="datatable">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Image</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Type</th>
+                    <th>Creation</th>
+                    <th>Archiving</th>
+                    <th>Publication</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </template>
 
 <script>
@@ -83,11 +86,11 @@ export default {
                                 Actions!
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" id="overview" href="#" data-id=${data.id}>Overview</a></li>
-                                <li><a class="dropdown-item" id="edit" href="#" data-id=${data.id}>Edit</a></li>
-                                <li><a class="dropdown-item" id="delete" href="#" data-id=${data.id}>Delete</a></li>
-                                <li><a class="dropdown-item" id="publish" href="#" data-id=${data.id}>Publish</a></li>
-                                <li><a class="dropdown-item" id="archive" href="#" data-id=${data.id}>Archive</a></li>
+                                <li><a class="dropdown-item" id="overview" href="" data-id=${data.id}>Overview</a></li>
+                                <li><a class="dropdown-item" id="edit" href="" data-id=${data.id}>Edit</a></li>
+                                <li><a class="dropdown-item" id="delete" href="" data-id=${data.id}>Delete</a></li>
+                                <li><a class="dropdown-item" id="publish" href="" data-id=${data.id}>Publish</a></li>
+                                <li><a class="dropdown-item" id="archive" href="" data-id=${data.id}>Archive</a></li>
                             </ul>
                             </div>`;
                     },
@@ -98,6 +101,9 @@ export default {
         };
     },
     methods: {
+        newBlog() {
+            this.$router.push("/new-blog");
+        },
         drawTable() {
             $("#datatable").DataTable().clear().draw();
         },
@@ -120,18 +126,21 @@ export default {
             let table = this;
             let body = $(document);
             body.on("click", "#overview", function (e) {
+                e.preventDefault();
                 table.$router.push({
                     name: "Overview",
                     params: { id: e.target.dataset.id },
-                });
+                }).catch((err) => { });
             });
             body.on("click", "#edit", function (e) {
+                e.preventDefault();
                 table.$router.push({
                     name: "Edit",
                     params: { id: e.target.dataset.id },
-                });
+                }).catch((err) => { });
             });
             body.on("click", "#delete", function (e) {
+                e.preventDefault();
                 axios
                     .post(`/api/delete-blog/${e.target.dataset.id}`)
                     .then((res) => {
@@ -156,6 +165,7 @@ export default {
                     });
             });
             body.on("click", "#publish", function (e) {
+                e.preventDefault();
                 axios
                     .post(`/api/publish-blog/${e.target.dataset.id}`)
                     .then((res) => {
@@ -166,6 +176,7 @@ export default {
                     });
             });
             body.on("click", "#archive", function (e) {
+                e.preventDefault();
                 axios
                     .post(`/api/archive-blog/${e.target.dataset.id}`)
                     .then((res) => {
@@ -183,5 +194,10 @@ export default {
         this.initTable();
         this.bindButtons();
     },
+    beforeRouteLeave(to, from, next) {
+        let table = $('#datatable').DataTable();
+        table.destroy();
+        next(true);
+    }
 };
 </script>

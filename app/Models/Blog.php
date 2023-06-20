@@ -26,12 +26,16 @@ class Blog extends Model
         switch ($colName) {
             case 0:
                 $name = "title";
+                break;
             case 2:
                 $name = "description";
+                break;
             case 3:
                 $name = "status";
+                break;
             case 4:
                 $name = "type";
+                break;
         }
         $filters = DB::table('blog')
             ->orderBy($name, $colOrder)

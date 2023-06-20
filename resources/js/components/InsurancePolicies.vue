@@ -1,65 +1,102 @@
 <template>
-    <div v-if="policies.length == 0">
-        <p>No policies! :D</p>
-    </div>
-    <div v-else>
-        <div
-            class="border border-gray-200 rounded p-2 m-2"
-            v-for="policy in policies"
-        >
-            <p v-if="policy.type == 'Group'">
-                <span
-                    ><b>Type:</b>
-                    <a href="#" @click.prevent="participants(policy.id)">{{
-                        policy.type
-                    }}</a></span
-                >
-            </p>
-            <p v-else><b>Type:</b> {{ policy.type }}</p>
-            <p><b>Description:</b> {{ policy.description }}</p>
-            <p>
-                <b>Holder Name:</b> {{ policy.holder_name }}
-                {{ policy.holder_surname }}
-            </p>
-            <p><b>Holder Phone Number:</b> {{ policy.holder_phone }}</p>
-            <p><b>Date From:</b> {{ policy.date_from }}</p>
-            <p><b>Date To:</b> {{ policy.date_to }}</p>
-        </div>
+    <div class="m-2">
+        <table class="table" id="datatablePolicies">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Holder Name</th>
+                    <th>Holder Phone Number</th>
+                    <th>Date From</th>
+                    <th>Date To</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 </template>
 
 <script>
-import axios from "axios";
+import "jquery/dist/jquery.min.js";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "datatables.net-dt/js/dataTables.dataTables";
+import "datatables.net-dt/css/jquery.dataTables.min.css";
+import $ from "jquery";
 import moment from "moment";
 export default {
     data() {
         return {
-            policies: [],
+            columns: [
+                {
+                    data: "type", render: function (data, type, row, meta) {
+                        if (data == "Group") {
+                            return `<a class="participants" href="" data-id=${row.id}>Group</a>`;
+                        } else {
+                            return "Individual";
+                        }
+                    },
+                },
+                { data: "description" },
+                {
+                    data: "holder_name", render: function (data, type, row, meta) {
+                        return data + " " + row.holder_surname;
+                    }
+                },
+                {
+                    data: "holder_phone", orderable: false,
+                    searchable: false,
+                },
+                {
+                    data: "date_from", render: function (data, type, row, meta) {
+                        return moment(data).format("DD.MM.YYYY");
+                    }, orderable: false,
+                    searchable: false,
+                },
+                {
+                    data: "date_to", render: function (data, type, row, meta) {
+                        return moment(data).format("DD.MM.YYYY");
+                    }, orderable: false,
+                    searchable: false,
+                },
+            ],
         };
     },
     methods: {
-        participants(id) {
-            this.$router.push({
-                name: "Participants",
-                params: { id: id },
+        bindButtons() {
+            let table = this;
+            let body = $(document);
+            body.on("click", ".participants", function (e) {
+                e.preventDefault();
+                table.$router.push({
+                    name: "Participants",
+                    params: { id: e.target.dataset.id },
+                }).catch((err) => { })
             });
         },
+        initTable() {
+            let table = this;
+            $("#datatablePolicies").DataTable({
+                stateSave: true,
+                processing: true,
+                serverSide: true,
+                destroy: true,
+                lengthMenu: [2, 5, 10, 15],
+                columns: table.columns,
+                ajax: {
+                    url: "/api/get-all-policies",
+                    type: "GET",
+                },
+            });
+        }
     },
     mounted() {
-        axios.get("/api/get-all-policies").then((res) => {
-            const status = JSON.parse(res.status);
-            if (status == "200") {
-                this.policies = res.data.map((policy) => {
-                    policy.date_from = moment(policy.date_from).format(
-                        "DD.MM.YYYY"
-                    );
-                    policy.date_to = moment(policy.date_from).format(
-                        "DD.MM.YYYY"
-                    );
-                    return policy;
-                });
-            }
-        });
+        this.initTable();
+        this.bindButtons();
     },
+    beforeRouteLeave(to, from, next) {
+        let table = $('#datatablePolicies').DataTable();
+        table.destroy();
+        next(true);
+    }
 };
 </script>

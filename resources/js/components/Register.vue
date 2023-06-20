@@ -51,7 +51,7 @@ export default {
             axios.post("/api/register", this.formFields).then((res) => {
                 const status = JSON.parse(res.status);
                 if (status == "200") {
-                    this.$router.push("/dashboard").then(() => {
+                    this.$router.push("/users").then(() => {
                         this.$router.go();
                     });
                 } else {

@@ -2,11 +2,12 @@ import NotFound from "./components/NotFound";
 import Home from "./components/Home";
 import GetPolicy from "./components/GetPolicy";
 import Login from "./components/Login";
-import Register from "./components/Register";
-import NewBlog from "./components/NewBlog";
-import Dashboard from "./components/Dashboard";
+import Blogs from "./components/Blogs";
 import Overview from "./components/Overview";
 import Edit from "./components/Edit";
+import NewBlog from "./components/NewBlog";
+import Users from "./components/Users";
+import Register from "./components/Register";
 import InsurancePolicies from "./components/InsurancePolicies";
 import Participants from "./components/Participants";
 
@@ -31,27 +32,9 @@ export default {
             component: Login,
         },
         {
-            path: "/register",
-            component: Register,
-        },
-        {
-            path: "/new-blog",
-            component: NewBlog,
-        },
-        {
-            path: "/dashboard",
-            component: Dashboard,
-            name: "Dashboard",
-        },
-        {
-            path: "/insurance-policies",
-            component: InsurancePolicies,
-            name: "InsurancePolicies",
-        },
-        {
-            path: "/participants/:id",
-            component: Participants,
-            name: "Participants",
+            path: "/blogs",
+            component: Blogs,
+            name: "Blogs",
         },
         {
             path: "/overview/:id",
@@ -63,5 +46,27 @@ export default {
             component: Edit,
             name: "Edit",
         },
+        {
+            path: "/new-blog",
+            component: NewBlog,
+        },
+        {
+            path: "/users",
+            component: Users,
+        },
+        {
+            path: "/register",
+            component: Register,
+        },
+        {
+            path: "/insurance-policies",
+            component: InsurancePolicies,
+            name: "InsurancePolicies",
+        },
+        {
+            path: "/participants/:id",
+            component: Participants,
+            name: "Participants",
+        }
     ],
 };

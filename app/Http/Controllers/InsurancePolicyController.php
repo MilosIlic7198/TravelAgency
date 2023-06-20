@@ -10,14 +10,41 @@ use Carbon\Carbon;
 class InsurancePolicyController extends Controller
 {
     //
-    public function get_All_Policies()
+    public function get_All_Policies(Request $request)
     {
-        return InsurancePolicy::all();
+        $participants = new InsurancePolicy();
+        $data = $participants->fetchFilters(
+            $request->start,
+            $request->length,
+            $request->order[0]['column'],
+            $request->order[0]["dir"],
+            $request->search['value'],
+        );
+        return [
+            "draw" => $request->draw,
+            "recordsTotal" => $data['total'],
+            "recordsFiltered" => $data['filtered'],
+            "data" => $data['data']
+        ];
     }
 
     public function get_All_Participants(Request $request, $id)
     {
-        dd($id);
+        $participants = new InsurancePolicy();
+        $data = $participants->fetchFiltersParticipants(
+            $id,
+            $request->start,
+            $request->length,
+            $request->order[0]['column'],
+            $request->order[0]["dir"],
+            $request->search['value'],
+        );
+        return [
+            "draw" => $request->draw,
+            "recordsTotal" => $data['total'],
+            "recordsFiltered" => $data['filtered'],
+            "data" => $data['data']
+        ];
     }
 
     public function create_Policy(Request $request)

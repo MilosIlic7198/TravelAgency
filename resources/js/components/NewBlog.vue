@@ -72,7 +72,7 @@ export default {
             axios.post("/api/create-blog", formData).then((res) => {
                 const status = JSON.parse(res.status);
                 if (status == "200") {
-                    this.$router.push("/dashboard");
+                    this.$router.push("/blogs");
                 }
             });
         },

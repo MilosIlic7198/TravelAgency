@@ -1,11 +1,10 @@
 <template>
-    <div class="m-2">
-        <table class="table" id="datatableParticipants">
+    <div>
+        <button class="btn btn-success my-4" @click="register()">Register</button>
+        <table class="table" id="datatableUsers">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Surname</th>
-                    <th>Birthdate</th>
+                    <th>ID</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -18,45 +17,49 @@ import "jquery/dist/jquery.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
+import axios from "axios";
 import $ from "jquery";
-import moment from "moment";
 export default {
     data() {
         return {
             columns: [
-                { data: "name" },
-                { data: "surname" },
-                {
-                    data: "birthdate", render: function (data, type, row, meta) {
-                        return moment(data).format("DD.MM.YYYY");
-                    }, orderable: false,
-                    searchable: false,
-                },
+                { data: "id" },
             ],
         };
     },
     methods: {
+        register() {
+            this.$router.push("/register");
+        },
+        drawTable() {
+            $("#datatableUsers").DataTable().clear().draw();
+        },
         initTable() {
             let table = this;
-            $("#datatableParticipants").DataTable({
+            $("#datatableUsers").DataTable({
                 stateSave: true,
                 processing: true,
                 serverSide: true,
                 destroy: true,
-                lengthMenu: [2, 5, 10],
+                lengthMenu: [2, 5, 10, 15, 20],
                 columns: table.columns,
                 ajax: {
-                    url: `/api/get-all-participants/${table.$route.params.id}`,
+                    url: "",
                     type: "GET",
                 },
             });
-        }
+        },
+        bindButtons() {
+            let table = this;
+            let body = $(document);
+        },
     },
     mounted() {
         this.initTable();
+        this.bindButtons();
     },
     beforeRouteLeave(to, from, next) {
-        let table = $('#datatableParticipants').DataTable();
+        let table = $('#datatableUsers').DataTable();
         table.destroy();
         next(true);
     }

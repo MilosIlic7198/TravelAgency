@@ -1,25 +1,49 @@
 <template>
     <div>
         <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
-            <div class="navbar-nav">
-                <router-link class="nav-link" to="/" exact> Home </router-link>
-                <router-link v-if="person == null" class="nav-link" to="/get-policy">
-                    Get Policy
-                </router-link>
-                <router-link v-if="person == null" class="nav-link" to="/login"> Login </router-link>
-                <router-link v-if="person != null" class="nav-link" to="/register">
-                    Register
-                </router-link>
-                <router-link v-if="person != null" class="nav-link" to="/new-blog">
-                    New Blog
-                </router-link>
-                <router-link v-if="person != null" class="nav-link" to="/dashboard">
-                    Dashboard
-                </router-link>
-                <router-link v-if="person != null" class="nav-link" to="/insurance-policies">
-                    Insurance Policies
-                </router-link>
-                <button v-if="person != null" class="nav-link" @click="logout()">Logout</button>
+            <div class="container-fluid">
+                <a class="navbar-brand" href="">Travel Agency</a>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <router-link class="nav-link" to="/" exact> Home </router-link>
+                        </li>
+                        <li v-if="person == null" class="nav-item">
+                            <router-link class="nav-link" to="/get-policy">
+                                Get Policy
+                            </router-link>
+                        </li>
+                        <li v-if="person == null" class="nav-item">
+                            <router-link class="nav-link" to="/login"> Login </router-link>
+                        </li>
+                        <li v-if="person != null" class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Dashboard
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <router-link class="dropdown-item" to="/blogs">
+                                        Blogs
+                                    </router-link>
+                                </li>
+                                <li>
+                                    <router-link class="dropdown-item" to="/users">
+                                        Users
+                                    </router-link>
+                                </li>
+                                <li>
+                                    <router-link class="dropdown-item" to="/insurance-policies">
+                                        Insurance Policies
+                                    </router-link>
+                                </li>
+                            </ul>
+                        </li>
+                        <li v-if="person != null" class="nav-item">
+                            <a class="nav-link" href="" role="button" @click.prevent="logout()">Logout</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
         <div class="container d-flex justify-content-center"><router-view :key="$route.fullPath"></router-view></div>
@@ -40,7 +64,8 @@ export default {
             axios.post('/api/logout').then(() => {
                 this.$router
                     .push('/')
-                    .then(() => { this.$router.go() })
+                    .then(() => { this.$router.go(); })
+                    .catch((err) => { })
             })
         }
     },

@@ -24,7 +24,7 @@
             </select>
         </div>
         <div class="m-2">
-            <button @click.prevent="edit()" class="btn btn-primary">
+            <button @click.prevent="save()" class="btn btn-primary">
                 Save
             </button>
             <button @click.prevent="cancel()" class="btn btn-secondary">
@@ -58,7 +58,7 @@ export default {
                 }
             });
         },
-        edit() {
+        save() {
             const editedData = new FormData();
             editedData.append("title", this.blog.title);
             editedData.append("description", this.blog.description);
@@ -70,12 +70,12 @@ export default {
                 .then((res) => {
                     const status = JSON.parse(res.status);
                     if (status == "200") {
-                        this.$router.push("/dashboard");
+                        this.$router.push("/blogs");
                     }
                 });
         },
         cancel() {
-            this.$router.push("/dashboard");
+            this.$router.push("/blogs");
         },
     },
     mounted() {
