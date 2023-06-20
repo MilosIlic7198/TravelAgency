@@ -8,6 +8,7 @@ import Dashboard from "./components/Dashboard";
 import Overview from "./components/Overview";
 import Edit from "./components/Edit";
 import InsurancePolicies from "./components/InsurancePolicies";
+import Participants from "./components/Participants";
 
 export default {
     mode: "history",
@@ -46,6 +47,11 @@ export default {
             path: "/insurance-policies",
             component: InsurancePolicies,
             name: "InsurancePolicies",
+        },
+        {
+            path: "/participants/:id",
+            component: Participants,
+            name: "Participants",
         },
         {
             path: "/overview/:id",

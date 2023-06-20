@@ -15,6 +15,11 @@ class InsurancePolicyController extends Controller
         return InsurancePolicy::all();
     }
 
+    public function get_All_Participants(Request $request, $id)
+    {
+        dd($id);
+    }
+
     public function create_Policy(Request $request)
     {
         $formFields = $request->validate([
