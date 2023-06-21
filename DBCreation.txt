@@ -84,6 +84,8 @@ TRUNCATE blog;
 TRUNCATE participant;
 TRUNCATE insurance_policy;
 
+ALTER TABLE person AUTO_INCREMENT = 1;
+ALTER TABLE role AUTO_INCREMENT = 1;
 ALTER TABLE blog AUTO_INCREMENT = 1;
 ALTER TABLE insurance_policy AUTO_INCREMENT = 1;
 

@@ -28,6 +28,10 @@ Route::middleware('auth:sanctum')->get('/authenticated', function (Request $requ
 Route::post('/login', [PersonController::class, 'login']);
 Route::post('/register', [PersonController::class, 'register']);
 Route::post('/logout', [PersonController::class, 'logout']);
+Route::get('/people', [PersonController::class, 'get_All_People']);
+Route::get('/get-person/{id}', [PersonController::class, 'get_Person']);
+Route::post('/edit-person/{id}', [PersonController::class, 'edit_Person']);
+Route::post('/delete-person/{id}', [PersonController::class, 'delete_Person']);
 Route::post('/create-blog', [BlogController::class, 'create_Blog']);
 Route::get('/get-blogs', [BlogController::class, 'get_Persons_Blogs']);
 Route::get('/get-all-blogs', [BlogController::class, 'get_All_Blogs']);

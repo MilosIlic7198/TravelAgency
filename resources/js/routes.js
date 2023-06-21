@@ -4,10 +4,11 @@ import GetPolicy from "./components/GetPolicy";
 import Login from "./components/Login";
 import Blogs from "./components/Blogs";
 import Overview from "./components/Overview";
-import Edit from "./components/Edit";
+import EditBlog from "./components/EditBlog";
 import NewBlog from "./components/NewBlog";
 import Users from "./components/Users";
 import Register from "./components/Register";
+import EditUser from "./components/EditUser";
 import InsurancePolicies from "./components/InsurancePolicies";
 import Participants from "./components/Participants";
 
@@ -42,9 +43,9 @@ export default {
             name: "Overview",
         },
         {
-            path: "/edit/:id",
-            component: Edit,
-            name: "Edit",
+            path: "/edit-blog/:id",
+            component: EditBlog,
+            name: "EditBlog",
         },
         {
             path: "/new-blog",
@@ -57,6 +58,11 @@ export default {
         {
             path: "/register",
             component: Register,
+        },
+        {
+            path: "/edit-user/:id",
+            component: EditUser,
+            name: "EditUser"
         },
         {
             path: "/insurance-policies",

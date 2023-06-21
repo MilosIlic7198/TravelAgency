@@ -135,7 +135,7 @@ export default {
             body.on("click", "#edit", function (e) {
                 e.preventDefault();
                 table.$router.push({
-                    name: "Edit",
+                    name: "EditBlog",
                     params: { id: e.target.dataset.id },
                 }).catch((err) => { });
             });
@@ -147,17 +147,14 @@ export default {
                         if (res.status == 200 && res.data == "Success") {
                             table.drawTable();
                         } else if (
-                            res.status == 500 &&
                             res.data == "Records not found!"
                         ) {
                             alert("Records not found!");
                         } else if (
-                            res.status == 500 &&
                             res.data == "Bad query!"
                         ) {
                             alert("Bad query!");
                         } else if (
-                            res.status == 500 &&
                             res.data == "General exception!"
                         ) {
                             alert("General exception!");

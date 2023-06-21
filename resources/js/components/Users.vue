@@ -5,6 +5,9 @@
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -17,13 +20,27 @@ import "jquery/dist/jquery.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
-import axios from "axios";
 import $ from "jquery";
 export default {
     data() {
         return {
             columns: [
                 { data: "id" },
+                { data: "email" },
+                { data: "role" },
+                {
+                    data: null, render: function (data, type, row, meta) {
+                        return `<div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Actions!
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" id="edit" href="" data-id=${data.id}>Edit</a></li>
+                                    <li><a class="dropdown-item" id="delete" href="" data-id=${data.id}>Delete</a></li>
+                                </ul>
+                            </div>`;
+                    }, orderable: false, searchable: false,
+                },
             ],
         };
     },
@@ -44,7 +61,7 @@ export default {
                 lengthMenu: [2, 5, 10, 15, 20],
                 columns: table.columns,
                 ajax: {
-                    url: "",
+                    url: "/api/people",
                     type: "GET",
                 },
             });
@@ -52,6 +69,35 @@ export default {
         bindButtons() {
             let table = this;
             let body = $(document);
+            body.on("click", "#edit", function (e) {
+                e.preventDefault();
+                table.$router.push({
+                    name: "EditUser",
+                    params: { id: e.target.dataset.id },
+                }).catch((err) => { });
+            });
+            body.on("click", "#delete", function (e) {
+                e.preventDefault();
+                axios
+                    .post(`/api/delete-person/${e.target.dataset.id}`)
+                    .then((res) => {
+                        if (res.status == 200 && res.data == "Success") {
+                            table.drawTable();
+                        } else if (
+                            res.data == "User not found!"
+                        ) {
+                            alert("User not found!");
+                        } else if (
+                            res.data == "Bad query!"
+                        ) {
+                            alert("Bad query!");
+                        } else if (
+                            res.data == "General exception!"
+                        ) {
+                            alert("General exception!");
+                        }
+                    });
+            });
         },
     },
     mounted() {

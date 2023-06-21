@@ -83,11 +83,11 @@ class BlogController extends Controller
             Blog::where('id', $id)->delete();
             return response()->json("Success", 200);
         } catch (RecordsNotFoundException $e) {
-            return response()->json("Records not found!", 500);
+            return response()->json("Records not found!", $e->getCode());
         } catch (QueryException $e) {
-            return response()->json("Bad query!", 500);
+            return response()->json("Bad query!", $e->getCode());
         } catch (Exception $e) {
-            return response()->json("General exception!", 500);
+            return response()->json("General exception!", $e->getCode());
         }
     }
 
@@ -108,8 +108,10 @@ class BlogController extends Controller
             $blog->archiving_date = $date->toDateTimeString();
             $blog->status = "Archived";
             $blog->save();
+        } else if ($blog->status == "Archived") {
+            return response(["message" => "You already archived!"], 403);
         } else {
-            return response(["message" => "You cannot archive if you did not publish first!"], 400);
+            return response(["message" => "You cannot archive if you did not publish first!"], 403);
         }
     }
 }
