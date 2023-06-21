@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use \Illuminate\Database\RecordsNotFoundException;
 use \Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Crypt;
-use \Illuminate\Contracts\Encryption\DecryptException;
 use Exception;
 
 class PersonController extends Controller
@@ -78,24 +76,24 @@ class PersonController extends Controller
         $roles = $roles->map(function ($role) {
             return $role->name;
         });
-        $person = Person::find($id);
-        return [$person, $roles];
+        $person = Person::select("id", "email")->where("id", $id)->get();
+        $personData = [$person->toArray()[0], $roles->toArray()];
+        return $personData;
     }
 
     public function edit_Person(Request $request, $id)
     {
         $formFields = $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required', 'min:6'],
         ]);
         $roles = explode(',', $request->roles);
         $person = Person::find($id);
         $person->email = $formFields['email'];
-        try {
-            $pass = Crypt::decryptString($formFields['password']);
-        } catch (DecryptException $e) {
-            dd("Jell!");
-            $person->password = bcrypt($formFields['password']);
+        if (isset($request->newPassword)) {
+            $formFields = $request->validate([
+                'newPassword' => ['required', 'min:6'],
+            ]);
+            $person->password = bcrypt($formFields['newPassword']);
         }
         $person->roles()->detach();
         foreach ($roles as $role) {

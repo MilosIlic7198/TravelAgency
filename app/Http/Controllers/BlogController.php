@@ -55,6 +55,7 @@ class BlogController extends Controller
 
     public function get_Blog(Request $request, $id)
     {
+        //Ovde vracam previse stvari!
         return Blog::find($id);
     }
 
@@ -74,7 +75,11 @@ class BlogController extends Controller
         $blog->image = $formFields['image'];
         $blog->description = $formFields['description'];
         $blog->type = $formFields['type'];
-        $blog->save();
+        $saved = $blog->save();
+        if ($saved) {
+            return response()->json('Success', 200);
+        }
+        return response()->json('Failed', 401);
     }
 
     public function delete_Blog(Request $request, $id)
