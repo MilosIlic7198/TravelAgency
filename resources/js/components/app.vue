@@ -46,7 +46,7 @@
                 </div>
             </div>
         </nav>
-        <div class="container d-flex justify-content-center"><router-view :key="$route.fullPath"></router-view></div>
+        <div class="container d-flex justify-content-center"><router-view @personLoggedIn="loggedIn"></router-view></div>
     </div>
 </template>
 
@@ -60,13 +60,18 @@ export default {
         };
     },
     methods: {
+        loggedIn(person) {
+            this.person = person;
+        },
         logout() {
-            axios.post('/api/logout').then(() => {
-                this.$router
-                    .push('/')
-                    .then(() => { this.$router.go(); })
-                    .catch((err) => { })
-            })
+            axios.post('/api/logout').then((res) => {
+                if (res.status == 200) {
+                    this.person = null;
+                    this.$router.push({ name: 'Home' }).catch((err) => { });
+                }
+            }).catch(err => {
+                alert(err.response.data);
+            });
         }
     },
     mounted() {

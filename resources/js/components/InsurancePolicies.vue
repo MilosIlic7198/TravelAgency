@@ -3,6 +3,7 @@
         <table class="table" id="datatablePolicies">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Type</th>
                     <th>Description</th>
                     <th>Holder Name</th>
@@ -27,6 +28,7 @@ export default {
     data() {
         return {
             columns: [
+                { data: "id" },
                 {
                     data: "type", render: function (data, type, row, meta) {
                         if (data == "Group") {

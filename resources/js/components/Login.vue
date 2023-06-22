@@ -32,14 +32,20 @@ export default {
     },
     methods: {
         login() {
+            if (!this.formFields.email || !this.formFields.password) {
+                alert("You have empty fields!");
+                return;
+            }
             axios.post("/api/login", this.formFields).then((res) => {
-                const status = JSON.parse(res.status);
-                if (status == "200") {
-                    this.$router
-                        .push('/blogs')
-                        .then(() => { this.$router.go() })
-                } else {
-                    this.$router.go();
+                if (res.status == 200) {
+                    this.$emit("personLoggedIn", res.data);
+                    this.$router.push({ name: 'Blogs' });
+                }
+            }).catch(err => {
+                alert(err.response.data);
+                this.formFields = {
+                    email: "",
+                    password: "",
                 }
             });
         },

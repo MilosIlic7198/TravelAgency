@@ -23,14 +23,17 @@ export default {
         {
             path: "/",
             component: Home,
+            name: "Home"
         },
         {
             path: "/get-policy",
             component: GetPolicy,
+            name: "GetPolicy"
         },
         {
             path: "/login",
             component: Login,
+            name: "Login"
         },
         {
             path: "/blogs",
@@ -50,14 +53,17 @@ export default {
         {
             path: "/new-blog",
             component: NewBlog,
+            name: "NewBlog"
         },
         {
             path: "/users",
             component: Users,
+            name: "Users"
         },
         {
             path: "/register",
             component: Register,
+            name: "Register"
         },
         {
             path: "/edit-user/:id",

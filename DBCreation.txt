@@ -4,8 +4,8 @@ USE travel_agency;
 
 CREATE TABLE blog (
 id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-title VARCHAR(25) NOT NULL,
-description VARCHAR(150) NOT NULL,
+title VARCHAR(255) NOT NULL,
+description TEXT NOT NULL,
 image VARCHAR(255) NULL,
 status ENUM('Published','In preparation','Archived') NOT NULL,
 creation_date DATETIME NOT NULL,
@@ -88,5 +88,6 @@ ALTER TABLE person AUTO_INCREMENT = 1;
 ALTER TABLE role AUTO_INCREMENT = 1;
 ALTER TABLE blog AUTO_INCREMENT = 1;
 ALTER TABLE insurance_policy AUTO_INCREMENT = 1;
+ALTER TABLE participant AUTO_INCREMENT = 1;
 
 

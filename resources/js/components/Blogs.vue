@@ -4,6 +4,7 @@
         <table class="table" id="datatable">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Title</th>
                     <th>Image</th>
                     <th>Description</th>
@@ -12,6 +13,7 @@
                     <th>Creation</th>
                     <th>Archiving</th>
                     <th>Publication</th>
+                    <th>Author</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -32,6 +34,7 @@ export default {
     data() {
         return {
             columns: [
+                { data: "id" },
                 { data: "title" },
                 {
                     data: "image",
@@ -78,6 +81,7 @@ export default {
                     orderable: false,
                     searchable: false,
                 },
+                { data: "author" },
                 {
                     data: null,
                     render: function (data, type, row, meta) {
@@ -102,7 +106,7 @@ export default {
     },
     methods: {
         newBlog() {
-            this.$router.push("/new-blog");
+            this.$router.push({ name: "NewBlog" });
         },
         drawTable() {
             $("#datatable").DataTable().clear().draw();
@@ -141,35 +145,39 @@ export default {
             });
             body.on("click", "#delete", function (e) {
                 e.preventDefault();
-                axios
-                    .post(`/api/delete-blog/${e.target.dataset.id}`)
-                    .then((res) => {
-                        if (res.status == 200 && res.data == "Success") {
-                            table.drawTable();
-                        } else if (
-                            res.data == "Records not found!"
-                        ) {
-                            alert("Records not found!");
-                        } else if (
-                            res.data == "Bad query!"
-                        ) {
-                            alert("Bad query!");
-                        } else if (
-                            res.data == "General exception!"
-                        ) {
-                            alert("General exception!");
-                        }
-                    });
+                const response = confirm("Are you sure you want to do that?");
+                if (response) {
+                    axios
+                        .post(`/api/delete-blog/${e.target.dataset.id}`)
+                        .then((res) => {
+                            if (res.status == 200 && res.data == "Success") {
+                                table.drawTable();
+                            } else if (
+                                res.data == "Records not found!"
+                            ) {
+                                alert(res.data);
+                            } else if (
+                                res.data == "Bad query!"
+                            ) {
+                                alert(res.data);
+                            } else if (
+                                res.data == "General exception!"
+                            ) {
+                                alert(res.data);
+                            }
+                        });
+                }
             });
             body.on("click", "#publish", function (e) {
                 e.preventDefault();
                 axios
                     .post(`/api/publish-blog/${e.target.dataset.id}`)
                     .then((res) => {
-                        const status = JSON.parse(res.status);
-                        if (status == "200") {
+                        if (res.status == 200) {
                             table.drawTable();
                         }
+                    }).catch(error => {
+                        alert(error.response.data.message);
                     });
             });
             body.on("click", "#archive", function (e) {
@@ -177,8 +185,7 @@ export default {
                 axios
                     .post(`/api/archive-blog/${e.target.dataset.id}`)
                     .then((res) => {
-                        const status = JSON.parse(res.status);
-                        if (status == "200") {
+                        if (res.status == 200) {
                             table.drawTable();
                         }
                     }).catch(error => {

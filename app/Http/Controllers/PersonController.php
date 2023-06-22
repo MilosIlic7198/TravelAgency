@@ -23,13 +23,13 @@ class PersonController extends Controller
             $roles = $person->roles()->get()->toArray();
             return response()->json(['id' => $person->id, 'email' => $person->email, 'role' => $roles[0]['name']], 200);
         }
-        return response()->json('Failed', 401);
+        return response()->json('Failed to login!', 401);
     }
     public function register(Request $request)
     {
         $formFields = $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required', 'min:6']
+            'password' => ['required', 'min:6', 'max:16']
         ]);
         $pass = bcrypt($formFields['password']);
         $person = new Person();
@@ -42,9 +42,9 @@ class PersonController extends Controller
             if (Auth::attempt($formFields)) {
                 return response()->json(['id' => $person->id, 'email' => $person->email, 'role' => $roles[0]['name']], 200);
             }
-            return response()->json('Failed', 401);
+            return response()->json('Failed to login!', 401);
         }
-        return response()->json('Failed', 401);
+        return response()->json('Failed to register', 401);
     }
 
     public function logout(Request $request)
@@ -77,6 +77,9 @@ class PersonController extends Controller
             return $role->name;
         });
         $person = Person::select("id", "email")->where("id", $id)->get();
+        if ($person->isEmpty()) {
+            return response()->json('Person not found!', 404);
+        }
         $personData = [$person->toArray()[0], $roles->toArray()];
         return $personData;
     }
@@ -107,7 +110,11 @@ class PersonController extends Controller
                 $person->roles()->attach(3);
             }
         }
-        $person->save();
+        $saved = $person->save();
+        if ($saved) {
+            return response()->json('Edit was success!', 200);
+        }
+        return response()->json('Failed to edit', 204);
     }
 
     public function delete_Person(Request $request, $id)

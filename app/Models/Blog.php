@@ -25,24 +25,32 @@ class Blog extends Model
         $name = "";
         switch ($colName) {
             case 0:
+                $name = "id";
+                break;
+            case 1:
                 $name = "title";
                 break;
-            case 2:
+            case 3:
                 $name = "description";
                 break;
-            case 3:
+            case 4:
                 $name = "status";
                 break;
-            case 4:
+            case 5:
                 $name = "type";
+                break;
+            case 9:
+                $name = "person.email";
                 break;
         }
         $filters = DB::table('blog')
+            ->select("blog.*", "person.email as author")
+            ->join("person", "person.id", "=", "blog.author_id")
             ->orderBy($name, $colOrder)
             ->where("author_id", $personId);
         if (!empty($search)) {
             $filters = $filters->whereRaw(
-                "(blog.title LIKE '%{$search}%' OR blog.description LIKE '%{$search}%' OR blog.status LIKE '%{$search}%' OR blog.type LIKE '%{$search}%')"
+                "(blog.id LIKE '%{$search}%' OR blog.title LIKE '%{$search}%' OR blog.description LIKE '%{$search}%' OR blog.status LIKE '%{$search}%' OR blog.type LIKE '%{$search}%' OR person.email LIKE '%{$search}%')"
             );
         }
 

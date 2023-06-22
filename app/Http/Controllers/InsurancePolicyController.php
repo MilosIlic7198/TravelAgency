@@ -28,25 +28,6 @@ class InsurancePolicyController extends Controller
         ];
     }
 
-    public function get_All_Participants(Request $request, $id)
-    {
-        $participants = new InsurancePolicy();
-        $data = $participants->fetchFiltersParticipants(
-            $id,
-            $request->start,
-            $request->length,
-            $request->order[0]['column'],
-            $request->order[0]["dir"],
-            $request->search['value'],
-        );
-        return [
-            "draw" => $request->draw,
-            "recordsTotal" => $data['total'],
-            "recordsFiltered" => $data['filtered'],
-            "data" => $data['data']
-        ];
-    }
-
     public function create_Policy(Request $request)
     {
         $formFields = $request->validate([
@@ -67,9 +48,7 @@ class InsurancePolicyController extends Controller
         $formFields['dateTo'] = Carbon::parse($formFields['dateTo'])->toDateString();
         if ($formFields['type'] == "Group") {
             if ($participantFields->fails()) {
-                return response()->json([
-                    'errors' => "Participants fields are empty!",
-                ], 422);
+                return response()->json("Participants fields are empty!", 422);
             }
             $policy = InsurancePolicy::create([
                 'type' => $formFields['type'],
@@ -88,9 +67,7 @@ class InsurancePolicyController extends Controller
                     'birthdate' => $birthdate
                 ]);
             }
-            return response()->json([
-                'success' => "Success in getting policy!",
-            ], 200);
+            return response()->json("Success in getting policy!", 200);
         }
         $policy = InsurancePolicy::create([
             'type' => $formFields['type'],
@@ -101,8 +78,6 @@ class InsurancePolicyController extends Controller
             'date_from' =>  $formFields['dateFrom'],
             'date_to' =>  $formFields['dateTo']
         ]);
-        return response()->json([
-            'success' => "Success in getting policy!",
-        ], 200);
+        return response()->json("Success in getting policy!", 200);
     }
 }

@@ -35,6 +35,9 @@
                     <label for="forDateTo" class="d-block text-lg">Date to:</label>
                     <date-picker type="date" v-model="policy.dateTo" format="DD.MM.YYYY"></date-picker>
                 </div>
+                <div class="m-2">
+                    <label class="d-block text-lg">Days: {{ calcDays }}</label>
+                </div>
             </div>
         </div>
         <div class="row justify-content-sm-center" v-if="showForm">
@@ -91,7 +94,7 @@
 <script>
 import DatePicker from "vue2-datepicker";
 import "vue2-datepicker/index.css";
-
+import moment from "moment";
 export default {
     components: { DatePicker },
     data() {
@@ -115,7 +118,23 @@ export default {
             },
         };
     },
+    computed: {
+        calcDays() {
+            if (!this.policy.dateFrom || !this.policy.dateTo) {
+                return "0";
+            }
+            const firstDate = moment(this.policy.dateFrom);
+            const lastDate = moment(this.policy.dateTo);
+
+            const daysDiff = lastDate.diff(firstDate, 'days')
+
+            return daysDiff;
+        }
+    },
     methods: {
+        checkIsBefore(date1, date2) {
+            return moment(date1).isSameOrBefore(date2);
+        },
         forIndividual() {
             this.policy.type = "Individual";
             this.showForm = false;
@@ -126,12 +145,12 @@ export default {
         },
         add() {
             if (
-                this.policy.participants[this.policy.participants.length - 1]
-                    .firstName == "" ||
-                this.policy.participants[this.policy.participants.length - 1]
-                    .lastName == "" ||
-                this.policy.participants[this.policy.participants.length - 1]
-                    .birthdate == ""
+                !this.policy.participants[this.policy.participants.length - 1]
+                    .firstName ||
+                !this.policy.participants[this.policy.participants.length - 1]
+                    .lastName ||
+                !this.policy.participants[this.policy.participants.length - 1]
+                    .birthdate
             ) {
                 alert("You must fill out last participant to add more!");
                 return;
@@ -147,14 +166,18 @@ export default {
         },
         submit() {
             if (
-                this.policy.description == "" ||
-                this.policy.holdersFirstName == "" ||
-                this.policy.holdersLastName == "" ||
-                this.policy.holdersPhoneNumber == "" ||
-                this.policy.dateFrom == "" ||
-                this.policy.dateTo == ""
+                !this.policy.description ||
+                !this.policy.holdersFirstName ||
+                !this.policy.holdersLastName ||
+                !this.policy.holdersPhoneNumber ||
+                !this.policy.dateFrom ||
+                !this.policy.dateTo
             ) {
                 alert("You must fill out all fields!");
+                return;
+            }
+            if (this.checkIsBefore(this.policy.dateTo, this.policy.dateFrom)) {
+                alert("Date to cannot be before date from!");
                 return;
             }
             if (this.policy.type == "Individual") {
@@ -168,9 +191,9 @@ export default {
             } else {
                 for (let i = 0; i < this.policy.participants.length; i++) {
                     if (
-                        this.policy.participants[i].firstName == "" ||
-                        this.policy.participants[i].lastName == "" ||
-                        this.policy.participants[i].birthdate == ""
+                        !this.policy.participants[i].firstName ||
+                        !this.policy.participants[i].lastName ||
+                        !this.policy.participants[i].birthdate
                     ) {
                         alert("You must fill out participants!");
                         return;
@@ -178,10 +201,28 @@ export default {
                 }
             }
             axios.post("/api/buy-policy", this.policy).then((res) => {
-                const status = JSON.parse(res.status);
-                if (status == "200") {
+                if (res.status == 200) {
                     alert(res.data.success);
+                    this.showForm = false;
+                    this.policy = {
+                        type: "Individual",
+                        description: "",
+                        holdersFirstName: "",
+                        holdersLastName: "",
+                        holdersPhoneNumber: "",
+                        dateFrom: "",
+                        dateTo: "",
+                        participants: [
+                            {
+                                firstName: "",
+                                lastName: "",
+                                birthdate: "",
+                            },
+                        ],
+                    }
                 }
+            }).catch(err => {
+                alert(err.response.data);
             });
         },
     },

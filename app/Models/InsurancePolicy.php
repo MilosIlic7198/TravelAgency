@@ -25,12 +25,15 @@ class InsurancePolicy extends Model
         $name = "";
         switch ($colName) {
             case 0:
-                $name = "type";
+                $name = "id";
                 break;
             case 1:
-                $name = "description";
+                $name = "type";
                 break;
             case 2:
+                $name = "description";
+                break;
+            case 3:
                 $name = "holder_name";
                 break;
         }
@@ -38,42 +41,13 @@ class InsurancePolicy extends Model
             ->orderBy($name, $colOrder);
         if (!empty($search)) {
             $filters = $filters->whereRaw(
-                "(insurance_policy.type LIKE '%{$search}%' OR insurance_policy.description LIKE '%{$search}%' OR insurance_policy.holder_name LIKE '%{$search}%' OR insurance_policy.holder_surname LIKE '%{$search}%')"
+                "(insurance_policy.id LIKE '%{$search}%' OR insurance_policy.type LIKE '%{$search}%' OR insurance_policy.description LIKE '%{$search}%' OR insurance_policy.holder_name LIKE '%{$search}%' OR insurance_policy.holder_surname LIKE '%{$search}%')"
             );
         }
 
         $filterNum = $filters->get();
 
         $total = DB::table('insurance_policy');
-
-        $filters = $filters->offset($start)->limit($length)->get();
-
-        return ['data' => $filters, 'total' => $total->count(), "filtered" => $filterNum->count()];
-    }
-
-    public function fetchFiltersParticipants($participantsId, $start, $length, $colName, $colOrder, $search)
-    {
-        $name = "";
-        switch ($colName) {
-            case 0:
-                $name = "name";
-                break;
-            case 1:
-                $name = "surname";
-                break;
-        }
-        $filters = DB::table('participant')
-            ->orderBy($name, $colOrder)
-            ->where("insurance_policy_id", $participantsId);
-        if (!empty($search)) {
-            $filters = $filters->whereRaw(
-                "(participant.name LIKE '%{$search}%' OR participant.surname LIKE '%{$search}%')"
-            );
-        }
-
-        $filterNum = $filters->get();
-
-        $total = DB::table('participant')->where("insurance_policy_id", $participantsId);
 
         $filters = $filters->offset($start)->limit($length)->get();
 

@@ -52,13 +52,19 @@ export default {
         },
         getBlog() {
             axios.get(`/api/get-blog/${this.$route.params.id}`).then((res) => {
-                const status = JSON.parse(res.status);
-                if (status == "200") {
+                if (res.status == 200) {
                     this.blog = res.data;
                 }
-            });
+            }).catch(err => {
+                alert(err.response.data);
+                this.$router.push({ name: "Blogs" });
+            });;
         },
         save() {
+            if (!this.blog.title || !this.blog.description || !this.blog.image || !this.blog.type) {
+                alert("You have empty fields!");
+                return;
+            }
             const editedData = new FormData();
             editedData.append("title", this.blog.title);
             editedData.append("description", this.blog.description);
@@ -68,14 +74,15 @@ export default {
             axios
                 .post(`/api/edit-blog/${this.$route.params.id}`, editedData)
                 .then((res) => {
-                    const status = JSON.parse(res.status);
-                    if (status == "200") {
-                        this.$router.push("/blogs");
+                    if (res.status == 200) {
+                        this.$router.push({ name: "Blogs" });
                     }
+                }).catch(err => {
+                    alert(err.response.data);
                 });
         },
         cancel() {
-            this.$router.push("/blogs");
+            this.$router.push({ name: "Blogs" });
         },
     },
     mounted() {

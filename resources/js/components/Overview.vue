@@ -2,9 +2,12 @@
     <div class="m-2">
         <h3 class="border border-gray-200 rounded p-2">{{ blog.title }}</h3>
         <img :src="'/storage/' + blog.image" alt="" class="img-thumbnail" />
-        <p class="border border-gray-200 rounded p-2">
-            <span v-html="blog.description"></span>
-        </p>
+        <dl class="border border-gray-200 rounded p-2">
+            <dt>Description:</dt>
+            <dd v-html="blog.description"></dd>
+        </dl>
+        <p class="border border-gray-200 rounded p-2">Publication date: {{ blog.publication_date }}</p>
+        <p class="border border-gray-200 rounded p-2">Author: {{ blog.author }}</p>
     </div>
 </template>
 
@@ -18,10 +21,12 @@ export default {
     },
     mounted() {
         axios.get(`/api/get-blog/${this.$route.params.id}`).then((res) => {
-            const status = JSON.parse(res.status);
-            if (status == "200") {
+            if (res.status == 200) {
                 this.blog = res.data;
             }
+        }).catch(err => {
+            alert(err.response.data);
+            this.blog = {};
         });
     },
 };

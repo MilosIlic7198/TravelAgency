@@ -40,7 +40,7 @@ class Person extends Authenticatable
             case 1:
                 $name = "email";
                 break;
-            case 3:
+            case 2:
                 $name = "role";
                 break;
         }

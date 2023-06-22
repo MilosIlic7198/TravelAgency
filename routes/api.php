@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\InsurancePolicyController;
+use App\Http\Controllers\ParticipantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,14 +33,17 @@ Route::get('/people', [PersonController::class, 'get_All_People']);
 Route::get('/get-person/{id}', [PersonController::class, 'get_Person']);
 Route::post('/edit-person/{id}', [PersonController::class, 'edit_Person']);
 Route::post('/delete-person/{id}', [PersonController::class, 'delete_Person']);
-Route::post('/create-blog', [BlogController::class, 'create_Blog']);
-Route::get('/get-blogs', [BlogController::class, 'get_Persons_Blogs']);
+
 Route::get('/get-all-blogs', [BlogController::class, 'get_All_Blogs']);
-Route::post('/buy-policy', [InsurancePolicyController::class, 'create_Policy']);
-Route::get('/get-all-policies', [InsurancePolicyController::class, 'get_All_Policies']);
-Route::get('/get-all-participants/{id}', [InsurancePolicyController::class, 'get_All_Participants']);
+Route::get('/get-blogs', [BlogController::class, 'get_Persons_Blogs']);
+Route::post('/create-blog', [BlogController::class, 'create_Blog']);
 Route::get('/get-blog/{id}', [BlogController::class, 'get_Blog']);
 Route::post('/edit-blog/{id}', [BlogController::class, 'edit_Blog']);
 Route::post('/delete-blog/{id}', [BlogController::class, 'delete_Blog']);
 Route::post('/publish-blog/{id}', [BlogController::class, 'publish_Blog']);
 Route::post('/archive-blog/{id}', [BlogController::class, 'archive_Blog']);
+
+Route::post('/buy-policy', [InsurancePolicyController::class, 'create_Policy']);
+Route::get('/get-all-policies', [InsurancePolicyController::class, 'get_All_Policies']);
+
+Route::get('/get-all-participants/{id}', [ParticipantController::class, 'get_All_Participants']);

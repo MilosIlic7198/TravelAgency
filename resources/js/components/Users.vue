@@ -46,7 +46,7 @@ export default {
     },
     methods: {
         register() {
-            this.$router.push("/register");
+            this.$router.push({ name: "Register" });
         },
         drawTable() {
             $("#datatableUsers").DataTable().clear().draw();
@@ -86,15 +86,15 @@ export default {
                         } else if (
                             res.data == "User not found!"
                         ) {
-                            alert("User not found!");
+                            alert(res.data);
                         } else if (
                             res.data == "Bad query!"
                         ) {
-                            alert("Bad query!");
+                            alert(res.data);
                         } else if (
                             res.data == "General exception!"
                         ) {
-                            alert("General exception!");
+                            alert(res.data);
                         }
                     });
             });

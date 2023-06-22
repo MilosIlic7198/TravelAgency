@@ -50,7 +50,17 @@ class BlogController extends Controller
 
     public function get_All_Blogs(Request $request)
     {
-        return Blog::where("status", "Published")->get();
+        return Blog::select(
+            "blog.title",
+            "blog.description",
+            "blog.image",
+            "blog.publication_date",
+            "blog.type",
+            "person.email as author"
+        )
+            ->join("person", "person.id", "=", "blog.author_id")
+            ->where("status", "Published")
+            ->get();
     }
 
     public function get_Blog(Request $request, $id)
