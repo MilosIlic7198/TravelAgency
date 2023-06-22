@@ -15,9 +15,9 @@ class BlogController extends Controller
     public function create_Blog(Request $request)
     {
         $formFields = $request->validate([
-            'title' => ['required', 'min:6'],
+            'title' => ['required', 'min:3', 'max:255'],
             'description' => ['required', 'min:8'],
-            'type' => ['required', 'min:2']
+            'type' => ['required']
         ]);
         if ($request->hasFile('image')) {
             $formFields['image'] = $request->file('image')->store('images', 'public');
@@ -65,8 +65,17 @@ class BlogController extends Controller
 
     public function get_Blog(Request $request, $id)
     {
-        //Ovde vracam previse stvari!
-        return Blog::find($id);
+        return Blog::select(
+            "blog.title",
+            "blog.description",
+            "blog.image",
+            "blog.publication_date",
+            "blog.type",
+            "person.email as author"
+        )
+            ->join("person", "person.id", "=", "blog.author_id")
+            ->where("blog.id", $id)
+            ->get();
     }
 
     public function edit_Blog(Request $request, $id)

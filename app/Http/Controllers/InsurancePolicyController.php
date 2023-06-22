@@ -35,7 +35,7 @@ class InsurancePolicyController extends Controller
             'description' => ['required', 'min:8'],
             'holdersFirstName' => ['required', 'min:3'],
             'holdersLastName' => ['required', 'min:3'],
-            'holdersPhoneNumber' => ['required', 'digits:10'],
+            'holdersPhoneNumber' => ['required', 'numeric', 'digits:10'],
             'dateFrom' => ['required', 'date'],
             'dateTo' => ['required', 'date'],
         ]);
@@ -79,5 +79,14 @@ class InsurancePolicyController extends Controller
             'date_to' =>  $formFields['dateTo']
         ]);
         return response()->json("Success in getting policy!", 200);
+    }
+
+    public function delete_Policy($id)
+    {
+        $policy = InsurancePolicy::where('id', $id)->delete();
+        if ($policy >= 1) {
+            return response()->json(["message" => "You have deleted this policy!"], 200);
+        }
+        return response()->json(["error" => "You have deleted this policy!"], 404);
     }
 }

@@ -1,6 +1,8 @@
 <template>
     <div>
-        <button class="btn btn-success my-4" @click.prevent="newBlog()">New Blog</button>
+        <button class="btn btn-success my-4" @click.prevent="newBlog()">
+            New Blog
+        </button>
         <table class="table" id="datatable">
             <thead>
                 <tr>
@@ -131,17 +133,21 @@ export default {
             let body = $(document);
             body.on("click", "#overview", function (e) {
                 e.preventDefault();
-                table.$router.push({
-                    name: "Overview",
-                    params: { id: e.target.dataset.id },
-                }).catch((err) => { });
+                table.$router
+                    .push({
+                        name: "Overview",
+                        params: { id: e.target.dataset.id },
+                    })
+                    .catch((err) => {});
             });
             body.on("click", "#edit", function (e) {
                 e.preventDefault();
-                table.$router.push({
-                    name: "EditBlog",
-                    params: { id: e.target.dataset.id },
-                }).catch((err) => { });
+                table.$router
+                    .push({
+                        name: "EditBlog",
+                        params: { id: e.target.dataset.id },
+                    })
+                    .catch((err) => {});
             });
             body.on("click", "#delete", function (e) {
                 e.preventDefault();
@@ -152,17 +158,11 @@ export default {
                         .then((res) => {
                             if (res.status == 200 && res.data == "Success") {
                                 table.drawTable();
-                            } else if (
-                                res.data == "Records not found!"
-                            ) {
+                            } else if (res.data == "Records not found!") {
                                 alert(res.data);
-                            } else if (
-                                res.data == "Bad query!"
-                            ) {
+                            } else if (res.data == "Bad query!") {
                                 alert(res.data);
-                            } else if (
-                                res.data == "General exception!"
-                            ) {
+                            } else if (res.data == "General exception!") {
                                 alert(res.data);
                             }
                         });
@@ -176,7 +176,8 @@ export default {
                         if (res.status == 200) {
                             table.drawTable();
                         }
-                    }).catch(error => {
+                    })
+                    .catch((error) => {
                         alert(error.response.data.message);
                     });
             });
@@ -188,7 +189,8 @@ export default {
                         if (res.status == 200) {
                             table.drawTable();
                         }
-                    }).catch(error => {
+                    })
+                    .catch((error) => {
                         alert(error.response.data.message);
                     });
             });
@@ -199,9 +201,9 @@ export default {
         this.bindButtons();
     },
     beforeRouteLeave(to, from, next) {
-        let table = $('#datatable').DataTable();
+        let table = $("#datatable").DataTable();
         table.destroy();
         next(true);
-    }
+    },
 };
 </script>

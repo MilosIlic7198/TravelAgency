@@ -21,7 +21,8 @@ FOREIGN KEY(author_id) REFERENCES person(id) ON DELETE CASCADE
 CREATE TABLE person (
 id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 email VARCHAR(50) NOT NULL,
-password VARCHAR(100) NOT NULL
+password VARCHAR(100) NOT NULL,
+UNIQUE (email)
 );
 
 CREATE TABLE person_role (
@@ -76,6 +77,8 @@ DROP TABLE person_role;
 DROP TABLE blog;
 DROP TABLE insurance_policy;
 DROP TABLE participant;
+
+SET FOREIGN_KEY_CHECKS=1;
 
 TRUNCATE person;
 TRUNCATE role;

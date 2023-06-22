@@ -45,5 +45,6 @@ Route::post('/archive-blog/{id}', [BlogController::class, 'archive_Blog']);
 
 Route::post('/buy-policy', [InsurancePolicyController::class, 'create_Policy']);
 Route::get('/get-all-policies', [InsurancePolicyController::class, 'get_All_Policies']);
+Route::post('/delete-policy/{id}', [InsurancePolicyController::class, 'delete_Policy']);
 
 Route::get('/get-all-participants/{id}', [ParticipantController::class, 'get_All_Participants']);
