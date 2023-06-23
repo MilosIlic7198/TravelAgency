@@ -35,8 +35,8 @@ export default {
                                 Actions!
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" id="edit" href="" data-id=${data.id}>Edit</a></li>
-                                    <li><a class="dropdown-item" id="delete" href="" data-id=${data.id}>Delete</a></li>
+                                    <li><a class="dropdown-item editUser" href="" data-id=${data.id}>Edit</a></li>
+                                    <li><a class="dropdown-item deleteUser" href="" data-id=${data.id}>Delete</a></li>
                                 </ul>
                             </div>`;
                     }, orderable: false, searchable: false,
@@ -69,33 +69,24 @@ export default {
         bindButtons() {
             let table = this;
             let body = $(document);
-            body.on("click", "#edit", function (e) {
+            body.on("click", ".editUser", function (e) {
                 e.preventDefault();
                 table.$router.push({
                     name: "EditUser",
                     params: { id: e.target.dataset.id },
                 }).catch((err) => { });
             });
-            body.on("click", "#delete", function (e) {
+            body.on("click", ".deleteUser", function (e) {
                 e.preventDefault();
                 axios
-                    .post(`/api/delete-person/${e.target.dataset.id}`)
+                    .delete(`/api/delete-person/${e.target.dataset.id}`)
                     .then((res) => {
-                        if (res.status == 200 && res.data == "Success") {
+                        if (res.status == 200) {
+                            console.log(res.data.message);
                             table.drawTable();
-                        } else if (
-                            res.data == "User not found!"
-                        ) {
-                            alert(res.data);
-                        } else if (
-                            res.data == "Bad query!"
-                        ) {
-                            alert(res.data);
-                        } else if (
-                            res.data == "General exception!"
-                        ) {
-                            alert(res.data);
                         }
+                    }).catch(err => {
+                        alert(err.response.data.error);
                     });
             });
         },

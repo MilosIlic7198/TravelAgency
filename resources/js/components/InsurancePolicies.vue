@@ -15,23 +15,8 @@
             </thead>
             <tbody></tbody>
         </table>
-        <Modal v-if="showModal">
-            <h3 slot="header">Are you sure you want to delete this police?</h3>
-            <button
-                slot="footer"
-                class="btn btn-success mx-1"
-                @click="deletePolice"
-            >
-                Yes
-            </button>
-            <button
-                slot="footer"
-                class="btn btn-success mx-1"
-                @click="showModal = false"
-            >
-                No
-            </button>
-        </Modal>
+        <modal name="participantsModal"></modal>
+        <v-dialog />
     </div>
 </template>
 
@@ -42,15 +27,13 @@ import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
 import moment from "moment";
-import Modal from "./Modal.vue";
-
+import Participants from "./Participants.vue";
 export default {
     components: {
-        Modal,
+        Participants
     },
     data() {
         return {
-            showModal: false,
             columns: [
                 { data: "id" },
                 {
@@ -63,7 +46,13 @@ export default {
                         }
                     },
                 },
-                { data: "description" },
+                {
+                    data: "description", render: function (data, type, row, meta) {
+                        return data.length > 25 ?
+                            data.substr(0, 25) + '…' :
+                            data;
+                    }
+                },
                 {
                     data: "holder_name",
                     render: function (data, type, row, meta) {
@@ -94,7 +83,7 @@ export default {
                 {
                     data: null,
                     render: function (data, type, row, meta) {
-                        return `<button class="btn btn-danger btn-sm" id="deletePolicy" data-id=${data.id}>Delete</button>`;
+                        return `<button class="btn btn-danger btn-sm deletePolicy" data-id=${data.id}>Delete</button>`;
                     },
                     orderable: false,
                     searchable: false,
@@ -103,40 +92,55 @@ export default {
         };
     },
     methods: {
-        deletePolice() {
-            console.log();
-            this.showModal = false;
+        deletePolicy(id) {
+            axios
+                .delete(`/api/delete-policy/${id}`)
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log(res.data.message);
+                        this.drawTable();
+                    }
+                }).catch(err => {
+                    alert(err.response.data.error);
+                });
+        },
+        participantsModal(id) {
+            this.$modal.show(Participants, { id: id });
+        },
+        confirmModal(id) {
+            this.$modal.show('dialog', {
+                title: 'Delete',
+                text: 'Are you sure you want to perform this action?',
+                buttons: [
+                    {
+                        title: 'No',
+                        handler: () => {
+                            this.$modal.hide('dialog')
+                        }
+                    },
+                    {
+                        title: 'Yes',
+                        handler: () => {
+                            this.deletePolicy(id);
+                            this.$modal.hide('dialog');
+                        }
+                    },
+                ]
+            })
+        },
+        drawTable() {
+            $("#datatablePolicies").DataTable().clear().draw();
         },
         bindButtons() {
             let table = this;
             let body = $(document);
             body.on("click", ".participants", function (e) {
-                table.$router
-                    .push({
-                        name: "Participants",
-                        params: { id: e.target.dataset.id },
-                    })
-                    .catch((err) => {});
-            });
-            body.on("click", "#deletePolicy", function (e) {
                 e.preventDefault();
-                table.showModal = true;
-                /* const response = confirm("Are you sure you want to do that?");
-                if (response) {
-                    axios
-                        .post(`/api/delete-policy/${e.target.dataset.id}`)
-                        .then((res) => {
-                            if (res.status == 200 && res.data == "Success") {
-                                table.drawTable();
-                            } else if (res.data == "Records not found!") {
-                                alert(res.data);
-                            } else if (res.data == "Bad query!") {
-                                alert(res.data);
-                            } else if (res.data == "General exception!") {
-                                alert(res.data);
-                            }
-                        });
-                } */
+                table.participantsModal(e.target.dataset.id);
+            });
+            body.on("click", ".deletePolicy", function (e) {
+                e.preventDefault();
+                table.confirmModal(e.target.dataset.id);
             });
         },
         initTable() {

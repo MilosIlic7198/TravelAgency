@@ -21,6 +21,7 @@ import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
 import moment from "moment";
 export default {
+    props: ['id'],
     data() {
         return {
             columns: [
@@ -46,7 +47,7 @@ export default {
                 lengthMenu: [2, 5, 10],
                 columns: table.columns,
                 ajax: {
-                    url: `/api/get-all-participants/${table.$route.params.id}`,
+                    url: `/api/get-all-participants/${table.id}`,
                     type: "GET",
                 },
             });

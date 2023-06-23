@@ -56,11 +56,12 @@ export default {
             }
             axios.post("/api/register", this.formFields).then((res) => {
                 if (res.status == 200) {
+                    console.log(res.data.message);
                     this.$emit("personLoggedIn", res.data);
                     this.$router.push({ name: 'Users' });
                 }
             }).catch(err => {
-                alert(err.response.data);
+                alert(err.response.data.error);
                 this.formFields = {
                     email: "",
                     password: "",

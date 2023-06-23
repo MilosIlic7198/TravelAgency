@@ -48,7 +48,7 @@ class InsurancePolicyController extends Controller
         $formFields['dateTo'] = Carbon::parse($formFields['dateTo'])->toDateString();
         if ($formFields['type'] == "Group") {
             if ($participantFields->fails()) {
-                return response()->json("Participants fields are empty!", 422);
+                return response()->json(["error" => "Participants fields are empty!"], 422);
             }
             $policy = InsurancePolicy::create([
                 'type' => $formFields['type'],
@@ -67,7 +67,7 @@ class InsurancePolicyController extends Controller
                     'birthdate' => $birthdate
                 ]);
             }
-            return response()->json("Success in getting policy!", 200);
+            return response()->json(["message" => "Success in getting policy!"], 200);
         }
         $policy = InsurancePolicy::create([
             'type' => $formFields['type'],
@@ -78,7 +78,7 @@ class InsurancePolicyController extends Controller
             'date_from' =>  $formFields['dateFrom'],
             'date_to' =>  $formFields['dateTo']
         ]);
-        return response()->json("Success in getting policy!", 200);
+        return response()->json(["message" => "Success in getting policy!"], 200);
     }
 
     public function delete_Policy($id)
@@ -87,6 +87,6 @@ class InsurancePolicyController extends Controller
         if ($policy >= 1) {
             return response()->json(["message" => "You have deleted this policy!"], 200);
         }
-        return response()->json(["error" => "You have deleted this policy!"], 404);
+        return response()->json(["error" => "There was an error in deleting this policy!"], 404);
     }
 }

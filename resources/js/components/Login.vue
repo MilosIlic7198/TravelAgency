@@ -38,11 +38,12 @@ export default {
             }
             axios.post("/api/login", this.formFields).then((res) => {
                 if (res.status == 200) {
+                    console.log(res.data);
                     this.$emit("personLoggedIn", res.data);
                     this.$router.push({ name: 'Blogs' });
                 }
             }).catch(err => {
-                alert(err.response.data);
+                alert(err.response.data.error);
                 this.formFields = {
                     email: "",
                     password: "",

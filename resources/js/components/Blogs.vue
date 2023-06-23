@@ -3,7 +3,7 @@
         <button class="btn btn-success my-4" @click.prevent="newBlog()">
             New Blog
         </button>
-        <table class="table" id="datatable">
+        <table class="table" id="datatableBlog">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -21,6 +21,7 @@
             </thead>
             <tbody></tbody>
         </table>
+        <v-dialog />
     </div>
 </template>
 
@@ -29,7 +30,6 @@ import "jquery/dist/jquery.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
-import axios from "axios";
 import $ from "jquery";
 import moment from "moment";
 export default {
@@ -50,7 +50,13 @@ export default {
                     orderable: false,
                     searchable: false,
                 },
-                { data: "description" },
+                {
+                    data: "description", render: function (data, type, row, meta) {
+                        return data.length > 25 ?
+                            data.substr(0, 25) + '…' :
+                            data;
+                    }
+                },
                 { data: "status" },
                 { data: "type" },
                 {
@@ -92,11 +98,11 @@ export default {
                                 Actions!
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" id="overview" href="" data-id=${data.id}>Overview</a></li>
-                                <li><a class="dropdown-item" id="edit" href="" data-id=${data.id}>Edit</a></li>
-                                <li><a class="dropdown-item" id="delete" href="" data-id=${data.id}>Delete</a></li>
-                                <li><a class="dropdown-item" id="publish" href="" data-id=${data.id}>Publish</a></li>
-                                <li><a class="dropdown-item" id="archive" href="" data-id=${data.id}>Archive</a></li>
+                                <li><a class="dropdown-item overviewBlog" href="" data-id=${data.id}>Overview</a></li>
+                                <li><a class="dropdown-item editBlog" href="" data-id=${data.id}>Edit</a></li>
+                                <li><a class="dropdown-item deleteBlog" href="" data-id=${data.id}>Delete</a></li>
+                                <li><a class="dropdown-item publishBlog" href="" data-id=${data.id}>Publish</a></li>
+                                <li><a class="dropdown-item archiveBlog" href="" data-id=${data.id}>Archive</a></li>
                             </ul>
                             </div>`;
                     },
@@ -107,15 +113,48 @@ export default {
         };
     },
     methods: {
+        deleteBlog(id) {
+            axios
+                .delete(`/api/delete-blog/${id}`)
+                .then((res) => {
+                    if (res.status == 200) {
+                        console.log(res.data.message);
+                        this.drawTable();
+                    }
+                }).catch(err => {
+                    alert(err.response.data.error);
+                });
+        },
+        confirmModal(id) {
+            this.$modal.show('dialog', {
+                title: "Delete",
+                text: 'Are you sure you want to perform this action?',
+                buttons: [
+                    {
+                        title: 'No',
+                        handler: () => {
+                            this.$modal.hide('dialog')
+                        }
+                    },
+                    {
+                        title: 'Yes',
+                        handler: () => {
+                            this.deleteBlog(id);
+                            this.$modal.hide('dialog');
+                        }
+                    },
+                ]
+            })
+        },
         newBlog() {
             this.$router.push({ name: "NewBlog" });
         },
         drawTable() {
-            $("#datatable").DataTable().clear().draw();
+            $("#datatableBlog").DataTable().clear().draw();
         },
         initTable() {
             let table = this;
-            $("#datatable").DataTable({
+            $("#datatableBlog").DataTable({
                 stateSave: true,
                 processing: true,
                 serverSide: true,
@@ -131,67 +170,54 @@ export default {
         bindButtons() {
             let table = this;
             let body = $(document);
-            body.on("click", "#overview", function (e) {
+            body.on("click", ".overviewBlog", function (e) {
                 e.preventDefault();
                 table.$router
                     .push({
                         name: "Overview",
                         params: { id: e.target.dataset.id },
                     })
-                    .catch((err) => {});
+                    .catch((err) => { });
             });
-            body.on("click", "#edit", function (e) {
+            body.on("click", ".editBlog", function (e) {
                 e.preventDefault();
                 table.$router
                     .push({
                         name: "EditBlog",
                         params: { id: e.target.dataset.id },
                     })
-                    .catch((err) => {});
+                    .catch((err) => { });
             });
-            body.on("click", "#delete", function (e) {
+            body.on("click", ".deleteBlog", function (e) {
                 e.preventDefault();
-                const response = confirm("Are you sure you want to do that?");
-                if (response) {
-                    axios
-                        .post(`/api/delete-blog/${e.target.dataset.id}`)
-                        .then((res) => {
-                            if (res.status == 200 && res.data == "Success") {
-                                table.drawTable();
-                            } else if (res.data == "Records not found!") {
-                                alert(res.data);
-                            } else if (res.data == "Bad query!") {
-                                alert(res.data);
-                            } else if (res.data == "General exception!") {
-                                alert(res.data);
-                            }
-                        });
-                }
+                table.confirmModal(e.target.dataset.id);
             });
-            body.on("click", "#publish", function (e) {
+            body.on("click", ".publishBlog", function (e) {
                 e.preventDefault();
                 axios
-                    .post(`/api/publish-blog/${e.target.dataset.id}`)
+                    .put(`/api/publish-blog/${e.target.dataset.id}`)
                     .then((res) => {
                         if (res.status == 200) {
+                            console.log(res.data.message);
                             table.drawTable();
                         }
                     })
-                    .catch((error) => {
-                        alert(error.response.data.message);
+                    .catch(err => {
+                        alert(err.response.data.error);
                     });
             });
-            body.on("click", "#archive", function (e) {
+            body.on("click", ".archiveBlog", function (e) {
                 e.preventDefault();
                 axios
-                    .post(`/api/archive-blog/${e.target.dataset.id}`)
+                    .put(`/api/archive-blog/${e.target.dataset.id}`)
                     .then((res) => {
                         if (res.status == 200) {
+                            console.log(res.data.message);
                             table.drawTable();
                         }
                     })
-                    .catch((error) => {
-                        alert(error.response.data.message);
+                    .catch(err => {
+                        alert(err.response.data.error);
                     });
             });
         },
@@ -201,7 +227,7 @@ export default {
         this.bindButtons();
     },
     beforeRouteLeave(to, from, next) {
-        let table = $("#datatable").DataTable();
+        let table = $("#datatableBlog").DataTable();
         table.destroy();
         next(true);
     },

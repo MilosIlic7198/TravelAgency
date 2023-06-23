@@ -5,9 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use \Illuminate\Database\RecordsNotFoundException;
-use \Illuminate\Database\QueryException;
-use Exception;
 
 class PersonController extends Controller
 {
@@ -23,7 +20,7 @@ class PersonController extends Controller
             $roles = $person->roles()->get()->toArray();
             return response()->json(['id' => $person->id, 'email' => $person->email, 'role' => $roles[0]['name']], 200);
         }
-        return response()->json('Failed to login!', 401);
+        return response()->json(["error" => 'Failed to login!'], 401);
     }
     public function register(Request $request)
     {
@@ -42,9 +39,9 @@ class PersonController extends Controller
             if (Auth::attempt($formFields)) {
                 return response()->json(['id' => $person->id, 'email' => $person->email, 'role' => $roles[0]['name']], 200);
             }
-            return response()->json('Failed to login!', 401);
+            return response()->json(["error" => 'Failed to login!'], 401);
         }
-        return response()->json('Failed to register', 401);
+        return response()->json(["error" => 'Failed to register!'], 401);
     }
 
     public function logout(Request $request)
@@ -78,7 +75,7 @@ class PersonController extends Controller
         });
         $person = Person::select("id", "email")->where("id", $id)->get();
         if ($person->isEmpty()) {
-            return response()->json('Person not found!', 404);
+            return response()->json(["error" => 'Person not found!'], 404);
         }
         $personData = [$person->toArray()[0], $roles->toArray()];
         return $personData;
@@ -112,22 +109,17 @@ class PersonController extends Controller
         }
         $saved = $person->save();
         if ($saved) {
-            return response()->json('Edit was success!', 200);
+            return response()->json(["message" => 'Edit was success!'], 200);
         }
-        return response()->json('Failed to edit', 204);
+        return response()->json(["error" => 'Failed to edit'], 204);
     }
 
     public function delete_Person(Request $request, $id)
     {
-        try {
-            Person::where('id', $id)->delete();
-            return response()->json("Success", 200);
-        } catch (RecordsNotFoundException $e) {
-            return response()->json("User not found!", $e->getCode());
-        } catch (QueryException $e) {
-            return response()->json("Bad query!", $e->getCode());
-        } catch (Exception $e) {
-            return response()->json("General exception!", $e->getCode());
+        $person = Person::where('id', $id)->delete();
+        if ($person >= 1) {
+            return response()->json(["messsage" => "You have deleted this person!"], 200);
         }
+        return response()->json(["error" => "There was an error in deleting this person!"], 404);
     }
 }

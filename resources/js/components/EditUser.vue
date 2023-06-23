@@ -47,8 +47,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
     data() {
         return {
@@ -73,11 +71,13 @@ export default {
                 .get(`/api/get-person/${this.$route.params.id}`)
                 .then((res) => {
                     if (res.status == 200) {
+                        console.log(res.data[0]);
+                        console.log(res.data[1]);
                         this.person = res.data[0];
                         this.roles = res.data[1];
                     }
                 }).catch(err => {
-                    alert(err.response.data);
+                    alert(err.response.data.error);
                     this.$router.push({ name: 'Users' });
                 });
         },
@@ -118,10 +118,11 @@ export default {
                 .post(`/api/edit-person/${this.$route.params.id}`, editedData)
                 .then((res) => {
                     if (res.status == 200) {
+                        console.log(res.data.message);
                         this.$router.push({ name: 'Users' });
                     }
                 }).catch(err => {
-                    alert(err.response.data);
+                    alert(err.response.data.error);
                 });
         },
         cancel() {

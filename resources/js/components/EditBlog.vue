@@ -35,8 +35,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
     data() {
         return {
@@ -53,7 +51,8 @@ export default {
         getBlog() {
             axios.get(`/api/get-blog/${this.$route.params.id}`).then((res) => {
                 if (res.status == 200) {
-                    this.blog = res.data;
+                    console.log(res.data[0]);
+                    this.blog = res.data[0];
                 }
             }).catch(err => {
                 alert(err.response.data);
@@ -75,10 +74,11 @@ export default {
                 .post(`/api/edit-blog/${this.$route.params.id}`, editedData)
                 .then((res) => {
                     if (res.status == 200) {
+                        console.log(res.data.message);
                         this.$router.push({ name: "Blogs" });
                     }
                 }).catch(err => {
-                    alert(err.response.data);
+                    alert(err.response.data.error);
                 });
         },
         cancel() {

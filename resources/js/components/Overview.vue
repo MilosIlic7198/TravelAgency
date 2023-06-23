@@ -8,8 +8,8 @@
         <p class="border border-gray-200 rounded p-2">
             {{
                 blog.publication_date == null
-                    ? "Not published yet!"
-                    : blog.publication_date
+                ? "Not published yet!"
+                : blog.publication_date
             }}
         </p>
         <p class="border border-gray-200 rounded p-2">{{ blog.author }}</p>
@@ -29,11 +29,12 @@ export default {
             .get(`/api/get-blog/${this.$route.params.id}`)
             .then((res) => {
                 if (res.status == 200) {
+                    console.log(res.data[0]);
                     this.blog = res.data[0];
                 }
             })
             .catch((err) => {
-                alert(err.response.data);
+                alert(err.response.data.error);
                 this.blog = {};
             });
     },

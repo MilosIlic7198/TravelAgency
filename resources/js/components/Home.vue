@@ -35,6 +35,7 @@ export default {
     mounted() {
         axios.get("/api/get-all-blogs").then((res) => {
             if (res.status == 200) {
+                console.log(res.data);
                 this.blogs = res.data;
                 this.blogs = this.blogs.map((one) => {
                     one.publication_date = moment(one.publication_date).format("DD.MM.YYYY HH:mm:ss a");
@@ -42,7 +43,7 @@ export default {
                 });
             }
         }).catch(err => {
-            alert(err.response.data);
+            alert(err.response.data.error);
             this.blogs = [];
         });
     },
