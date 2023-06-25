@@ -3,6 +3,12 @@
         <button class="btn btn-success my-4" @click.prevent="newBlog()">
             New Blog
         </button>
+        <div v-if="error.length" class="alert alert-danger m-2" role="alert">
+            {{ error }}
+        </div>
+        <div v-if="success.length" class="alert alert-success m-2" role="alert">
+            {{ success }}
+        </div>
         <table class="table" id="datatableBlog">
             <thead>
                 <tr>
@@ -35,6 +41,8 @@ import moment from "moment";
 export default {
     data() {
         return {
+            success: "",
+            error: "",
             columns: [
                 { data: "id" },
                 { data: "title" },
@@ -51,11 +59,12 @@ export default {
                     searchable: false,
                 },
                 {
-                    data: "description", render: function (data, type, row, meta) {
-                        return data.length > 25 ?
-                            data.substr(0, 25) + '…' :
-                            data;
-                    }
+                    data: "description",
+                    render: function (data, type, row, meta) {
+                        return data.length > 25
+                            ? data.substr(0, 25) + "…"
+                            : data;
+                    },
                 },
                 { data: "status" },
                 { data: "type" },
@@ -98,11 +107,11 @@ export default {
                                 Actions!
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item overviewBlog" href="" data-id=${data.id}>Overview</a></li>
-                                <li><a class="dropdown-item editBlog" href="" data-id=${data.id}>Edit</a></li>
-                                <li><a class="dropdown-item deleteBlog" href="" data-id=${data.id}>Delete</a></li>
-                                <li><a class="dropdown-item publishBlog" href="" data-id=${data.id}>Publish</a></li>
-                                <li><a class="dropdown-item archiveBlog" href="" data-id=${data.id}>Archive</a></li>
+                                <li><a class="dropdown-item overviewBlog" type="button" data-id=${data.id}>Overview</a></li>
+                                <li><a class="dropdown-item editBlog" type="button" data-id=${data.id}>Edit</a></li>
+                                <li><a class="dropdown-item deleteBlog" type="button" data-id=${data.id}>Delete</a></li>
+                                <li><a class="dropdown-item publishBlog" type="button" data-id=${data.id}>Publish</a></li>
+                                <li><a class="dropdown-item archiveBlog" type="button" data-id=${data.id}>Archive</a></li>
                             </ul>
                             </div>`;
                     },
@@ -113,38 +122,53 @@ export default {
         };
     },
     methods: {
+        displaySuccess(message) {
+            this.success = message;
+            setTimeout(() => {
+                this.success = "";
+            }, 3000);
+        },
+        displayError(error) {
+            this.error = error;
+            setTimeout(() => {
+                this.error = "";
+            }, 5000);
+        },
         deleteBlog(id) {
             axios
                 .delete(`/api/delete-blog/${id}`)
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data.message);
+                        this.displaySuccess(res.data.message);
                         this.drawTable();
                     }
-                }).catch(err => {
-                    alert(err.response.data.error);
+                })
+                .catch((err) => {
+                    console.log(err.response.data.error);
+                    this.displayError(err.response.data.error);
                 });
         },
         confirmModal(id) {
-            this.$modal.show('dialog', {
+            this.$modal.show("dialog", {
                 title: "Delete",
-                text: 'Are you sure you want to perform this action?',
+                text: "Are you sure you want to perform this action?",
                 buttons: [
                     {
-                        title: 'No',
+                        title: "No",
                         handler: () => {
-                            this.$modal.hide('dialog')
-                        }
+                            this.$modal.hide("dialog");
+                        },
                     },
                     {
-                        title: 'Yes',
+                        title: "Yes",
                         handler: () => {
                             this.deleteBlog(id);
-                            this.$modal.hide('dialog');
-                        }
+                            this.$modal.hide("dialog");
+                        },
                     },
-                ]
-            })
+                ],
+            });
         },
         newBlog() {
             this.$router.push({ name: "NewBlog" });
@@ -177,7 +201,7 @@ export default {
                         name: "Overview",
                         params: { id: e.target.dataset.id },
                     })
-                    .catch((err) => { });
+                    .catch((err) => {});
             });
             body.on("click", ".editBlog", function (e) {
                 e.preventDefault();
@@ -186,7 +210,7 @@ export default {
                         name: "EditBlog",
                         params: { id: e.target.dataset.id },
                     })
-                    .catch((err) => { });
+                    .catch((err) => {});
             });
             body.on("click", ".deleteBlog", function (e) {
                 e.preventDefault();
@@ -199,11 +223,13 @@ export default {
                     .then((res) => {
                         if (res.status == 200) {
                             console.log(res.data.message);
+                            table.displaySuccess(res.data.message);
                             table.drawTable();
                         }
                     })
-                    .catch(err => {
-                        alert(err.response.data.error);
+                    .catch((err) => {
+                        console.log(err.response.data.error);
+                        table.displayError(err.response.data.error);
                     });
             });
             body.on("click", ".archiveBlog", function (e) {
@@ -213,11 +239,13 @@ export default {
                     .then((res) => {
                         if (res.status == 200) {
                             console.log(res.data.message);
+                            table.displaySuccess(res.data.message);
                             table.drawTable();
                         }
                     })
-                    .catch(err => {
-                        alert(err.response.data.error);
+                    .catch((err) => {
+                        console.log(err.response.data.error);
+                        table.displayError(err.response.data.error);
                     });
             });
         },
@@ -229,7 +257,7 @@ export default {
     beforeRouteLeave(to, from, next) {
         let table = $("#datatableBlog").DataTable();
         table.destroy();
-        next(true);
+        return next(true);
     },
 };
 </script>

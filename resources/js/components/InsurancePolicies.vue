@@ -1,5 +1,11 @@
 <template>
     <div class="m-2">
+        <div v-if="error.length" class="alert alert-danger m-2" role="alert">
+            {{ error }}
+        </div>
+        <div v-if="success.length" class="alert alert-success m-2" role="alert">
+            {{ success }}
+        </div>
         <table class="table" id="datatablePolicies">
             <thead>
                 <tr>
@@ -30,10 +36,12 @@ import moment from "moment";
 import Participants from "./Participants.vue";
 export default {
     components: {
-        Participants
+        Participants,
     },
     data() {
         return {
+            success: "",
+            error: "",
             columns: [
                 { data: "id" },
                 {
@@ -47,11 +55,12 @@ export default {
                     },
                 },
                 {
-                    data: "description", render: function (data, type, row, meta) {
-                        return data.length > 25 ?
-                            data.substr(0, 25) + '…' :
-                            data;
-                    }
+                    data: "description",
+                    render: function (data, type, row, meta) {
+                        return data.length > 25
+                            ? data.substr(0, 25) + "…"
+                            : data;
+                    },
                 },
                 {
                     data: "holder_name",
@@ -92,41 +101,56 @@ export default {
         };
     },
     methods: {
+        displaySuccess(message) {
+            this.success = message;
+            setTimeout(() => {
+                this.success = "";
+            }, 3000);
+        },
+        displayError(error) {
+            this.error = error;
+            setTimeout(() => {
+                this.error = "";
+            }, 5000);
+        },
         deletePolicy(id) {
             axios
                 .delete(`/api/delete-policy/${id}`)
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data.message);
+                        this.displaySuccess(res.data.message);
                         this.drawTable();
                     }
-                }).catch(err => {
-                    alert(err.response.data.error);
+                })
+                .catch((err) => {
+                    console.log(err.response.data.error);
+                    this.displayError(err.response.data.error);
                 });
         },
         participantsModal(id) {
             this.$modal.show(Participants, { id: id });
         },
-        confirmModal(id) {
-            this.$modal.show('dialog', {
-                title: 'Delete',
-                text: 'Are you sure you want to perform this action?',
+        confirmDialog(id) {
+            this.$modal.show("dialog", {
+                title: "Delete",
+                text: "Are you sure you want to perform this action?",
                 buttons: [
                     {
-                        title: 'No',
+                        title: "No",
                         handler: () => {
-                            this.$modal.hide('dialog')
-                        }
+                            this.$modal.hide("dialog");
+                        },
                     },
                     {
-                        title: 'Yes',
+                        title: "Yes",
                         handler: () => {
                             this.deletePolicy(id);
-                            this.$modal.hide('dialog');
-                        }
+                            this.$modal.hide("dialog");
+                        },
                     },
-                ]
-            })
+                ],
+            });
         },
         drawTable() {
             $("#datatablePolicies").DataTable().clear().draw();
@@ -140,7 +164,7 @@ export default {
             });
             body.on("click", ".deletePolicy", function (e) {
                 e.preventDefault();
-                table.confirmModal(e.target.dataset.id);
+                table.confirmDialog(e.target.dataset.id);
             });
         },
         initTable() {
@@ -166,7 +190,7 @@ export default {
     beforeRouteLeave(to, from, next) {
         let table = $("#datatablePolicies").DataTable();
         table.destroy();
-        next(true);
+        return next(true);
     },
 };
 </script>

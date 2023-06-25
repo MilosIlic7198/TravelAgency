@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Blog;
 use Carbon\Carbon;
 use Exception;
@@ -12,23 +13,35 @@ class BlogController extends Controller
 
     public function create_Blog(Request $request)
     {
-        $formFields = $request->validate([
-            'title' => ['required', 'min:3', 'max:255'],
-            'description' => ['required', 'min:8'],
-            'type' => ['required']
-        ]);
-        if ($request->hasFile('image')) {
-            $formFields['image'] = $request->file('image')->store('images', 'public');
+        try {
+            $validator = Validator::make($request->all(), [
+                'title' => ['required', 'min:3', 'max:255'],
+                'description' => ['required', 'min:8'],
+                'type' => ['required']
+            ]);
+            if ($validator->fails()) {
+                return response()->json(["error" => "Blog fields must be filled in correctly!"], 422);
+            }
+            $date = Carbon::now();
+            $newBlogFields = [
+                "title" => $request->title,
+                "description" => $request->description,
+                "status" => "In preparation",
+                "creation_date" => $date->toDateTimeString(),
+                "type" => $request->type,
+                "author_id" => auth()->user()->id
+            ];
+            if ($request->hasFile("image")) {
+                $newBlogFields["image"] = $request->file("image")->store("images", "public");
+            }
+            $blog = Blog::create($newBlogFields);
+            if ($blog->exists) {
+                return response()->json(["message" => 'You have created this blog!'], 200);
+            }
+            return response()->json(["message" => 'Failed to create this blog!'], 400);
+        } catch (Exception $e) {
+            return response()->json(["error" => 'There was an error in creating this blog!'], 500);
         }
-        $date = Carbon::now();
-        $formFields['status'] = 'In preparation';
-        $formFields['creation_date'] = $date->toDateTimeString();
-        $formFields['author_id'] = auth()->user()->id;
-        $blog = Blog::create($formFields);
-        if ($blog->exists) {
-            return response()->json(["message" => 'You have created this blog!'], 200);
-        }
-        return response()->json(["error" => 'Failed to create this blog!'], 204);
     }
 
     public function get_Persons_Blogs(Request $request)
@@ -50,10 +63,10 @@ class BlogController extends Controller
         ];
     }
 
-    public function get_All_Blogs(Request $request)
+    public function get_All_Blogs()
     {
         try {
-            return Blog::select(
+            $blogs = Blog::select(
                 "blog.title",
                 "blog.description",
                 "blog.image",
@@ -64,15 +77,20 @@ class BlogController extends Controller
                 ->join("person", "person.id", "=", "blog.author_id")
                 ->where("status", "Published")
                 ->get();
+            if (count($blogs) != 0) {
+                return $blogs;
+            }
+            return response()->json(["error" => "These blogs do not exist!"], 404);
         } catch (Exception $e) {
-            return response()->json(["error" => $e->getMessage()], $e->getCode());
+            dd($e->getMessage());
+            return response()->json(["error" => 'There was an error in getting blogs!'], 500);
         }
     }
 
-    public function get_Blog(Request $request, $id)
+    public function get_Blog($id)
     {
         try {
-            return Blog::select(
+            $blog = Blog::select(
                 "blog.title",
                 "blog.description",
                 "blog.image",
@@ -83,73 +101,103 @@ class BlogController extends Controller
                 ->join("person", "person.id", "=", "blog.author_id")
                 ->where("blog.id", $id)
                 ->get();
+            if (count($blog) != 0) {
+                return $blog;
+            }
+            return response()->json(["error" => 'This blog does not exist!'], 404);
         } catch (Exception $e) {
-            return response()->json(["error" => $e->getMessage()], $e->getCode());
+            return response()->json(["error" => 'There was an error in getting this blog!'], 500);
         }
     }
 
     public function edit_Blog(Request $request, $id)
     {
-        $formFields = $request->validate([
-            'title' => ['required', 'min:3'],
-            'description' => ['required', 'min:6'],
-            'type' => ['required', 'min:2']
-        ]);
-        $formFields['image'] = $request->image;
-        if ($request->hasFile('imageFile')) {
-            $formFields['image'] = $request->file('imageFile')->store('images', 'public');
-        }
-        $blog = Blog::find($id);
-        $blog->title = $formFields['title'];
-        $blog->image = $formFields['image'];
-        $blog->description = $formFields['description'];
-        $blog->type = $formFields['type'];
-        $saved = $blog->save();
-        if ($saved) {
-            return response()->json(["message" => 'You have edited this blog!'], 200);
-        }
-        return response()->json(["error" => 'Failed to edit this blog!'], 204);
-    }
-
-    public function delete_Blog(Request $request, $id)
-    {
-        $blog = Blog::where('id', $id)->delete();
-        if ($blog >= 1) {
-            return response()->json(["message" => 'You have deleted this blog!'], 200);
-        }
-        return response()->json(["error" => 'Failed to delete this blog!'], 204);
-    }
-
-    public function publish_Blog(Request $request, $id)
-    {
-        $date = Carbon::now();
-        $blog = Blog::find($id);
-        $blog->publication_date = $date->toDateTimeString();
-        $blog->status = "Published";
-        $saved = $blog->save();
-        if ($saved) {
-            return response()->json(["message" => 'You have published this blog!'], 200);
-        }
-        return response()->json(["error" => 'Failed to publish this blog!'], 204);
-    }
-
-    public function archive_Blog(Request $request, $id)
-    {
-        $blog = Blog::find($id);
-        if ($blog->status == "Published") {
-            $date = Carbon::now();
-            $blog->archiving_date = $date->toDateTimeString();
-            $blog->status = "Archived";
+        try {
+            $validator = Validator::make($request->all(), [
+                'title' => ['required', 'min:3'],
+                'description' => ['required', 'min:6'],
+                'type' => ['required']
+            ]);
+            if ($validator->fails()) {
+                return response()->json(["error" => "Blog fields must be filled in correctly!"], 422);
+            }
+            $image = $request->image;
+            if ($request->hasFile('imageFile')) {
+                $image = $request->file('imageFile')->store('images', 'public');
+            }
+            $blog = Blog::find($id);
+            $blog->title = $request->title;
+            $blog->image = $image;
+            $blog->description = $request->description;
+            $blog->type = $request->type;
             $saved = $blog->save();
             if ($saved) {
-                return response(["message" => "You already archived!"], 200);
-            } else {
-                return response(["error" => "There was an error in archiving this blog!"], 204);
+                return response()->json(["message" => 'You have edited this blog!'], 200);
             }
-        } else if ($blog->status == "Archived") {
-            return response(["error" => "You already archived!"], 204);
-        } else {
-            return response(["error" => "You cannot archive if you did not publish first!"], 204);
+            return response()->json(["error" => 'Failed to edit this blog!'], 400);
+        } catch (Exception $e) {
+            return response()->json(["error" => 'There was an error in editing this blog!'], 500);
+        }
+    }
+
+    public function delete_Blog($id)
+    {
+        try {
+            if (Blog::where('id', $id)->delete()) {
+                return response()->json(["message" => 'You have deleted this blog!'], 200);
+            }
+            return response()->json(["error" => 'This blog does not exist!'], 404);
+        } catch (Exception $e) {
+            return response()->json(["error" => "There was an error in deleting this blog!"], 500);
+        }
+    }
+
+    public function publish_Blog($id)
+    {
+        try {
+            $blog = Blog::find($id);
+            if ($blog == null) {
+                return response()->json(["error" => 'This blog does not exist!'], 404);
+            }
+            $date = Carbon::now();
+            $blog->publication_date = $date->toDateTimeString();
+            $blog->status = "Published";
+            $saved = $blog->save();
+            if ($saved) {
+                return response()->json(["message" => 'You have published this blog!'], 200);
+            }
+            return response()->json(["error" => 'Failed to publish this blog!'], 400);
+        } catch (Exception $e) {
+            return response()->json(["error" => "There was an error in publishing this blog!"], 500);
+        }
+    }
+
+    public function archive_Blog($id)
+    {
+        try {
+            $blog = Blog::find($id);
+            if ($blog == null) {
+                return response()->json(["error" => 'This blog does not exist!'], 404);
+            }
+            if ($blog->status == "In preparation") {
+                return response(["error" => "You cannot archive if you did not publish first!"], 400);
+            }
+            if ($blog->status == "Published") {
+                $date = Carbon::now();
+                $blog->archiving_date = $date->toDateTimeString();
+                $blog->status = "Archived";
+                $saved = $blog->save();
+                if ($saved) {
+                    return response(["message" => "You have archived this blog!"], 200);
+                } else {
+                    return response(["error" => "Failed to archive this blog!"], 400);
+                }
+            }
+            if ($blog->status == "Archived") {
+                return response(["error" => "You already archived!"], 400);
+            }
+        } catch (Exception $e) {
+            return response()->json(["error" => "There was an error in archiving this blog!"], 500);
         }
     }
 }

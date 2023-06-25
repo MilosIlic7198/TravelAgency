@@ -23,17 +23,17 @@ export default {
         {
             path: "/",
             component: Home,
-            name: "Home"
+            name: "Home",
         },
         {
             path: "/get-policy",
             component: GetPolicy,
-            name: "GetPolicy"
+            name: "GetPolicy",
         },
         {
             path: "/login",
             component: Login,
-            name: "Login"
+            name: "Login",
         },
         {
             path: "/blogs",
@@ -53,22 +53,22 @@ export default {
         {
             path: "/new-blog",
             component: NewBlog,
-            name: "NewBlog"
+            name: "NewBlog",
         },
         {
             path: "/users",
             component: Users,
-            name: "Users"
+            name: "Users",
         },
         {
             path: "/register",
             component: Register,
-            name: "Register"
+            name: "Register",
         },
         {
             path: "/edit-user/:id",
             component: EditUser,
-            name: "EditUser"
+            name: "EditUser",
         },
         {
             path: "/insurance-policies",
@@ -79,6 +79,6 @@ export default {
             path: "/participants/:id",
             component: Participants,
             name: "Participants",
-        }
+        },
     ],
 };

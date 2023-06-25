@@ -21,16 +21,18 @@ import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
 import moment from "moment";
 export default {
-    props: ['id'],
+    props: ["id"],
     data() {
         return {
             columns: [
                 { data: "name" },
                 { data: "surname" },
                 {
-                    data: "birthdate", render: function (data, type, row, meta) {
+                    data: "birthdate",
+                    render: function (data, type, row, meta) {
                         return moment(data).format("DD.MM.YYYY");
-                    }, orderable: false,
+                    },
+                    orderable: false,
                     searchable: false,
                 },
             ],
@@ -51,15 +53,15 @@ export default {
                     type: "GET",
                 },
             });
-        }
+        },
     },
     mounted() {
         this.initTable();
     },
     beforeRouteLeave(to, from, next) {
-        let table = $('#datatableParticipants').DataTable();
+        let table = $("#datatableParticipants").DataTable();
         table.destroy();
         next(true);
-    }
+    },
 };
 </script>
