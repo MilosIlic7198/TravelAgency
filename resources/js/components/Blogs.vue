@@ -61,6 +61,7 @@ export default {
                 {
                     data: "description",
                     render: function (data, type, row, meta) {
+                        data = data.replace(/(<([^>]+)>)/ig, '');
                         return data.length > 25
                             ? data.substr(0, 25) + "…"
                             : data;
@@ -136,7 +137,7 @@ export default {
         },
         deleteBlog(id) {
             axios
-                .delete(`/api/delete-blog/${id}`)
+                .delete(`/delete-blog/${id}`)
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data.message);
@@ -184,9 +185,10 @@ export default {
                 serverSide: true,
                 destroy: true,
                 lengthMenu: [2, 5, 10, 15, 20],
+                pageLength: 10,
                 columns: table.columns,
                 ajax: {
-                    url: "/api/get-blogs",
+                    url: "/get-blogs",
                     type: "GET",
                 },
             });
@@ -201,7 +203,7 @@ export default {
                         name: "Overview",
                         params: { id: e.target.dataset.id },
                     })
-                    .catch((err) => {});
+                    .catch((err) => { });
             });
             body.on("click", ".editBlog", function (e) {
                 e.preventDefault();
@@ -210,7 +212,7 @@ export default {
                         name: "EditBlog",
                         params: { id: e.target.dataset.id },
                     })
-                    .catch((err) => {});
+                    .catch((err) => { });
             });
             body.on("click", ".deleteBlog", function (e) {
                 e.preventDefault();
@@ -219,7 +221,7 @@ export default {
             body.on("click", ".publishBlog", function (e) {
                 e.preventDefault();
                 axios
-                    .put(`/api/publish-blog/${e.target.dataset.id}`)
+                    .put(`/publish-blog/${e.target.dataset.id}`)
                     .then((res) => {
                         if (res.status == 200) {
                             console.log(res.data.message);
@@ -235,7 +237,7 @@ export default {
             body.on("click", ".archiveBlog", function (e) {
                 e.preventDefault();
                 axios
-                    .put(`/api/archive-blog/${e.target.dataset.id}`)
+                    .put(`/archive-blog/${e.target.dataset.id}`)
                     .then((res) => {
                         if (res.status == 200) {
                             console.log(res.data.message);

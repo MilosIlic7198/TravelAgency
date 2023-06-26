@@ -47,12 +47,8 @@ class PersonController extends Controller
             $person->password = $pass;
             $saved = $person->save();
             $person->roles()->attach(3);
-            $roles = $person->roles()->get()->toArray();
             if ($saved) {
-                if (Auth::attempt($request->all())) {
-                    return response()->json(['id' => $person->id, 'email' => $person->email, 'role' => $roles[0]['name']], 200);
-                }
-                return response()->json(["error" => 'Failed to login!'], 401);
+                return response()->json(["message" => 'Register was successful!'], 200);
             }
             return response()->json(["error" => 'Failed to register!'], 401);
         } catch (Exception $e) {

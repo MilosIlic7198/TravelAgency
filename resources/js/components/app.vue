@@ -21,48 +21,30 @@
                             </router-link>
                         </li>
                         <li v-if="person != null" class="nav-item dropdown">
-                            <a
-                                class="nav-link dropdown-toggle"
-                                type="button"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
+                            <a class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
                                 Dashboard
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <router-link
-                                        class="dropdown-item"
-                                        to="/blogs"
-                                    >
+                                    <router-link class="dropdown-item" to="/blogs">
                                         Blogs
                                     </router-link>
                                 </li>
                                 <li>
-                                    <router-link
-                                        class="dropdown-item"
-                                        to="/users"
-                                    >
+                                    <router-link class="dropdown-item" to="/users">
                                         Users
                                     </router-link>
                                 </li>
                                 <li>
-                                    <router-link
-                                        class="dropdown-item"
-                                        to="/insurance-policies"
-                                    >
+                                    <router-link class="dropdown-item" to="/insurance-policies">
                                         Insurance Policies
                                     </router-link>
                                 </li>
                             </ul>
                         </li>
                         <li v-if="person != null" class="nav-item">
-                            <a
-                                class="nav-link"
-                                type="button"
-                                @click.prevent="logout()"
-                                >Logout</a
-                            >
+                            <a class="nav-link" type="button" @click.prevent="logout()">Logout</a>
                         </li>
                         <li v-if="error.length" class="nav-item">
                             <a class="nav-link">| {{ error }}</a>
@@ -121,12 +103,12 @@ export default {
         },
         logout() {
             axios
-                .post("/api/logout")
+                .post("/logout")
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res);
                         this.person = null;
-                        this.$router.push({ name: "Home" }).catch((err) => {});
+                        this.$router.push({ name: "Home" }).catch((err) => { });
                     }
                 })
                 .catch((err) => {

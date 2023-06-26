@@ -9,67 +9,36 @@
         </div>
         <div class="m-2">
             <label for="title" class="d-block text-lg">Email:</label>
-            <input
-                type="text"
-                class="border border-gray-200 rounded p-2"
-                name="title"
-                v-model="person.email"
-            />
+            <input type="text" class="border border-gray-200 rounded p-2" name="title" v-model="person.email" />
         </div>
         <div class="m-2">
             <label for="title" class="d-block text-lg">New password:</label>
-            <input
-                type="password"
-                class="border border-gray-200 rounded p-2"
-                name="title"
-                v-model="newPassword"
-            />
+            <input type="password" class="border border-gray-200 rounded p-2" name="title" v-model="newPassword" />
             <div class="form-text">
                 Leave this empty if you don't want to reset password!
             </div>
         </div>
         <div class="form-check m-2">
-            <input
-                class="form-check-input"
-                type="checkbox"
-                value="Admin"
-                id="adminCheck"
-                :checked="
-                    roles[0] == 'Admin' ||
-                    roles[1] == 'Admin' ||
-                    roles[2] == 'Admin'
-                "
-            />
+            <input class="form-check-input" type="checkbox" value="Admin" id="adminCheck" :checked="roles[0] == 'Admin' ||
+                roles[1] == 'Admin' ||
+                roles[2] == 'Admin'
+                " />
             <label class="form-check-label" for="adminCheck"> Admin </label>
         </div>
         <div class="form-check m-2">
-            <input
-                class="form-check-input"
-                type="checkbox"
-                value="Moderator"
-                id="moderatorCheck"
-                :checked="
-                    roles[0] == 'Moderator' ||
-                    roles[1] == 'Moderator' ||
-                    roles[2] == 'Moderator'
-                "
-            />
+            <input class="form-check-input" type="checkbox" value="Moderator" id="moderatorCheck" :checked="roles[0] == 'Moderator' ||
+                roles[1] == 'Moderator' ||
+                roles[2] == 'Moderator'
+                " />
             <label class="form-check-label" for="moderatorCheck">
                 Moderator
             </label>
         </div>
         <div class="form-check m-2">
-            <input
-                class="form-check-input"
-                type="checkbox"
-                value="User"
-                id="userCheck"
-                :checked="
-                    roles[0] == 'User' ||
-                    roles[1] == 'User' ||
-                    roles[2] == 'User'
-                "
-            />
+            <input class="form-check-input" type="checkbox" value="User" id="userCheck" :checked="roles[0] == 'User' ||
+                roles[1] == 'User' ||
+                roles[2] == 'User'
+                " />
             <label class="form-check-label" for="userCheck"> User </label>
         </div>
         <div class="m-2">
@@ -123,7 +92,7 @@ export default {
         },
         getPerson() {
             axios
-                .get(`/api/get-person/${this.id}`)
+                .get(`/get-person/${this.id}`)
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data);
@@ -173,7 +142,7 @@ export default {
             }
             editedData.roles = newRoles;
             axios
-                .post(`/api/edit-person/${this.id}`, editedData)
+                .post(`/edit-person/${this.id}`, editedData)
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data.message);

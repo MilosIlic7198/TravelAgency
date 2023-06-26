@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->get('/authenticated', function (Request $requ
     return true;
 });
 
-Route::post('/login', [PersonController::class, 'login']);
+/* Route::post('/login', [PersonController::class, 'login']);
 Route::post('/register', [PersonController::class, 'register']);
 Route::post('/logout', [PersonController::class, 'logout']);
 Route::get('/people', [PersonController::class, 'get_All_People']);
@@ -48,3 +48,4 @@ Route::get('/get-all-policies', [InsurancePolicyController::class, 'get_All_Poli
 Route::delete('/delete-policy/{id}', [InsurancePolicyController::class, 'delete_Policy']);
 
 Route::get('/get-all-participants/{id}', [ParticipantController::class, 'get_All_Participants']);
+ */

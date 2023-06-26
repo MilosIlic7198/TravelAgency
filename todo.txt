@@ -1,5 +1,0 @@
-
-1. Odraditi validacu kod forme za polise, da se ispise greska ispod polja koja nije zadovoljilo validaciju.
-2. Promena validacije telefona za string.
-3. Dodaj akcije na tabeli za polisu (brisanje).
-4. Nije radio edit bloga!

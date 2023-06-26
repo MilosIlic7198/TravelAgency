@@ -63,7 +63,7 @@ export default {
                 return;
             }
             axios
-                .post("/api/login", this.formFields)
+                .post("/login", this.formFields)
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data);

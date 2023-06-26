@@ -6,33 +6,17 @@
         </div>
         <div class="m-2">
             <label for="email" class="d-block text-lg">Email address</label>
-            <input
-                type="email"
-                class="border border-gray-200 rounded p-2"
-                id="email"
-                placeholder="Enter email"
-                name="email"
-                v-model="formFields.email"
-            />
+            <input type="email" class="border border-gray-200 rounded p-2" id="email" placeholder="Enter email" name="email"
+                v-model="formFields.email" />
         </div>
         <div class="m-2">
             <label for="password" class="d-block text-lg">Password</label>
-            <input
-                type="password"
-                class="border border-gray-200 rounded p-2"
-                id="password"
-                placeholder="Password"
-                name="password"
-                v-model="formFields.password"
-            />
+            <input type="password" class="border border-gray-200 rounded p-2" id="password" placeholder="Password"
+                name="password" v-model="formFields.password" />
         </div>
 
         <div class="m-2">
-            <button
-                @click.prevent="register()"
-                type="submit"
-                class="btn btn-primary"
-            >
+            <button @click.prevent="register()" type="submit" class="btn btn-primary">
                 Register
             </button>
         </div>
@@ -85,11 +69,10 @@ export default {
                 return;
             }
             axios
-                .post("/api/register", this.formFields)
+                .post("/register", this.formFields)
                 .then((res) => {
                     if (res.status == 200) {
-                        console.log(res.data);
-                        this.$emit("personLoggedIn", res.data);
+                        console.log(res.data.message);
                         this.$router.push({ name: "Users" });
                     }
                 })

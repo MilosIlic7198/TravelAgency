@@ -6,43 +6,23 @@
         </div>
         <div class="m-2">
             <label for="title" class="d-block text-lg">Title:</label>
-            <input
-                type="text"
-                class="border border-gray-200 rounded p-2"
-                name="title"
-                v-model="newBlog.title"
-            />
+            <input type="text" class="border border-gray-200 rounded p-2" name="title" v-model="newBlog.title" />
         </div>
         <div class="m-2">
-            <label for="description" class="d-block text-lg"
-                >Description:</label
-            >
-            <vue-editor v-model="newBlog.description" />
+            <label for="description" class="d-block text-lg">Description:</label>
+            <vue-editor id="newBlogEditor" v-model="newBlog.description" />
         </div>
         <div class="m-2">
             <label for="image" class="d-block text-lg"> Image: </label>
-            <input
-                type="file"
-                class="border border-gray-200 rounded p-2"
-                name="image"
-                @change="imageSelected($event)"
-            />
+            <input type="file" class="border border-gray-200 rounded p-2" name="image" @change="imageSelected($event)" />
         </div>
-        <select
-            class="border border-gray-200 rounded p-2 m-2"
-            name="type"
-            v-model="newBlog.type"
-        >
+        <select class="border border-gray-200 rounded p-2 m-2" name="type" v-model="newBlog.type">
             <option selected value="">Choose the type of the blog!</option>
             <option value="News">News</option>
             <option value="Post">Post</option>
         </select>
         <div class="m-2">
-            <button
-                type="submit"
-                class="btn btn-success"
-                @click.prevent="createBlog()"
-            >
+            <button type="submit" class="btn btn-success" @click.prevent="createBlog()">
                 Create Blog
             </button>
         </div>
@@ -89,7 +69,7 @@ export default {
             newBlogData.append("image", this.newBlog.image);
             newBlogData.append("type", this.newBlog.type);
             axios
-                .post("/api/create-blog", newBlogData)
+                .post("/create-blog", newBlogData)
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data.message);
@@ -110,3 +90,10 @@ export default {
     },
 };
 </script>
+
+<style>
+#newBlogEditor {
+    height: 300px;
+    width: 840px;
+}
+</style>

@@ -47,9 +47,10 @@ export default {
                 serverSide: true,
                 destroy: true,
                 lengthMenu: [2, 5, 10],
+                pageLength: 10,
                 columns: table.columns,
                 ajax: {
-                    url: `/api/get-all-participants/${table.id}`,
+                    url: `/get-all-participants/${table.id}`,
                     type: "GET",
                 },
             });

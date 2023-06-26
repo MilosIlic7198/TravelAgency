@@ -115,7 +115,7 @@ export default {
         },
         deletePolicy(id) {
             axios
-                .delete(`/api/delete-policy/${id}`)
+                .delete(`/delete-policy/${id}`)
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data.message);
@@ -175,9 +175,10 @@ export default {
                 serverSide: true,
                 destroy: true,
                 lengthMenu: [2, 5, 10, 15],
+                pageLength: 10,
                 columns: table.columns,
                 ajax: {
-                    url: "/api/get-all-policies",
+                    url: "/get-all-policies",
                     type: "GET",
                 },
             });

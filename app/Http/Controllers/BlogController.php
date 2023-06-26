@@ -67,6 +67,7 @@ class BlogController extends Controller
     {
         try {
             $blogs = Blog::select(
+                "blog.id",
                 "blog.title",
                 "blog.description",
                 "blog.image",
