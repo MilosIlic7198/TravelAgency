@@ -127,6 +127,9 @@ export default {
         };
     },
     computed: {
+        dateFromAndDateTo() {
+            return `${this.policy.dateFrom}|${this.policy.dateTo}`;
+        },
         calcDays() {
             if (!this.policy.dateFrom || !this.policy.dateTo) {
                 return "0";
@@ -138,6 +141,22 @@ export default {
 
             return daysDiff;
         },
+    },
+    watch: {
+        dateFromAndDateTo(newVal, oldVal) {
+            const [oldDateFrom, oldDateTo] = oldVal.split('|');
+            const [newDateFrom, newDateTo] = newVal.split('|');
+
+            if (oldDateFrom == '' && oldDateTo == '') {
+                return;
+            }
+            if (moment(newDateFrom).isSameOrAfter(newDateTo)) {
+                this.displayError("You cannot set date from to be after date to!");
+                this.policy.dateFrom = '';
+                this.policy.dateTo = '';
+                return;
+            }
+        }
     },
     methods: {
         displaySuccess(message) {
@@ -170,18 +189,20 @@ export default {
             this.showForm = true;
         },
         add() {
-            if (
-                !this.policy.participants[this.policy.participants.length - 1]
-                    .firstName ||
-                !this.policy.participants[this.policy.participants.length - 1]
-                    .lastName ||
-                !this.policy.participants[this.policy.participants.length - 1]
-                    .birthdate
-            ) {
-                this.displayError(
-                    "You must fill out last participant to add more!"
-                );
-                return;
+            if (this.policy.participants.length != 0) {
+                if (
+                    !this.policy.participants[this.policy.participants.length - 1]
+                        .firstName ||
+                    !this.policy.participants[this.policy.participants.length - 1]
+                        .lastName ||
+                    !this.policy.participants[this.policy.participants.length - 1]
+                        .birthdate
+                ) {
+                    this.displayError(
+                        "You must fill out last participant to add more!"
+                    );
+                    return;
+                }
             }
             this.policy.participants.push({
                 firstName: "",
@@ -206,10 +227,6 @@ export default {
             }
             if (!this.validatePhoneNumber(this.policy.holdersPhoneNumber)) {
                 this.displayError("Invalid phone number!");
-                return;
-            }
-            if (this.checkIsBefore(this.policy.dateTo, this.policy.dateFrom)) {
-                this.displayError("Date to cannot be before date from!");
                 return;
             }
             if (this.policy.type == "Individual") {

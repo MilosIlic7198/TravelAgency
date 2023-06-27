@@ -20,6 +20,8 @@ class InsurancePolicyController extends Controller
             $request->order[0]['column'],
             $request->order[0]["dir"],
             $request->search['value'],
+            $request->from,
+            $request->to,
         );
         return [
             "draw" => $request->draw,

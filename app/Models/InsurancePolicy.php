@@ -20,7 +20,7 @@ class InsurancePolicy extends Model
         return $this->hasMany(Participant::class);
     }
 
-    public function fetchFilters($start, $length, $colName, $colOrder, $search)
+    public function fetchFilters($start, $length, $colName, $colOrder, $search, $from, $to)
     {
         $name = "";
         switch ($colName) {
@@ -44,7 +44,22 @@ class InsurancePolicy extends Model
                 "(insurance_policy.id LIKE '%{$search}%' OR insurance_policy.type LIKE '%{$search}%' OR insurance_policy.description LIKE '%{$search}%' OR insurance_policy.holder_name LIKE '%{$search}%' OR insurance_policy.holder_surname LIKE '%{$search}%')"
             );
         }
-
+        if (!empty($from) && !empty($to)) {
+            $filters = $filters->whereRaw(
+                "(insurance_policy.date_from >= '{$from}' AND insurance_policy.date_to <= '{$to}')"
+            );
+        } else {
+            if (!empty($from)) {
+                $filters = $filters->whereRaw(
+                    "(insurance_policy.date_from >= '{$from}')"
+                );
+            }
+            if (!empty($to)) {
+                $filters = $filters->whereRaw(
+                    "(insurance_policy.date_to <= '{$to}')"
+                );
+            }
+        }
         $filterNum = $filters->get();
 
         $total = DB::table('insurance_policy');

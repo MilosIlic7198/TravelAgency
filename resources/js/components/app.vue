@@ -10,7 +10,7 @@
                                 Home
                             </router-link>
                         </li>
-                        <li v-if="person == null" class="nav-item">
+                        <li class="nav-item">
                             <router-link class="nav-link" to="/get-policy">
                                 Get Policy
                             </router-link>
@@ -57,7 +57,7 @@
             </div>
         </nav>
         <div class="container d-flex justify-content-center">
-            <router-view @personLoggedIn="loggedIn"></router-view>
+            <router-view @personLoggedIn="loggedIn" :key="$route.fullPath"></router-view>
         </div>
     </div>
 </template>

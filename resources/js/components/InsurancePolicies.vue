@@ -6,6 +6,16 @@
         <div v-if="success.length" class="alert alert-success m-2" role="alert">
             {{ success }}
         </div>
+        <form class="form-inline m-2">
+            <div class="form-group">
+                <label for="forDateFrom" class="d-block text-lg">Date From:</label>
+                <date-picker type="date" v-model="dateFrom" format="DD.MM.YYYY"></date-picker>
+            </div>
+            <div class="form-group">
+                <label for="forDateTo" class="d-block text-lg">Date to:</label>
+                <date-picker type="date" v-model="dateTo" format="DD.MM.YYYY"></date-picker>
+            </div>
+        </form>
         <table class="table" id="datatablePolicies">
             <thead>
                 <tr>
@@ -34,14 +44,21 @@ import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
 import moment from "moment";
 import Participants from "./Participants.vue";
+import DatePicker from "vue2-datepicker";
+import "vue2-datepicker/index.css";
 export default {
     components: {
         Participants,
+        DatePicker,
     },
     data() {
         return {
             success: "",
             error: "",
+            dateFrom: "",
+            dateTo: "",
+            newDateFrom: "",
+            newDateTo: "",
             columns: [
                 { data: "id" },
                 {
@@ -99,6 +116,45 @@ export default {
                 },
             ],
         };
+    },
+    computed: {
+        dateFromAndDateTo() {
+            return `${this.dateFrom}|${this.dateTo}`;
+        },
+    },
+    watch: {
+        dateFromAndDateTo(newVal, oldVal) {
+            const [oldDateFrom, oldDateTo] = oldVal.split('|');
+            const [newDateFrom, newDateTo] = newVal.split('|');
+
+            if (oldDateFrom == '' && oldDateTo == '') {
+                return;
+            }
+            if (newDateFrom == '' || newDateTo == '') {
+                this.newDateFrom = "";
+                this.newDateTo = "";
+                this.drawTable();
+                return;
+            }
+            if (newDateFrom == "null" || newDateTo == "null") {
+                this.newDateFrom = "";
+                this.newDateTo = "";
+                this.drawTable();
+                return;
+            }
+            if (moment(newDateFrom).isSameOrAfter(newDateTo)) {
+                this.displayError("You cannot set date from to be after date to!");
+                this.dateFrom = "";
+                this.dateTo = "";
+                this.newDateFrom = "";
+                this.newDateTo = "";
+                this.drawTable();
+                return;
+            }
+            this.newDateFrom = moment(this.dateFrom).format("YYYY-MM-DD");
+            this.newDateTo = moment(this.dateTo).format("YYYY-MM-DD");
+            this.drawTable();
+        }
     },
     methods: {
         displaySuccess(message) {
@@ -180,6 +236,10 @@ export default {
                 ajax: {
                     url: "/get-all-policies",
                     type: "GET",
+                    data: function (data) {
+                        data.from = table.newDateFrom;
+                        data.to = table.newDateTo;
+                    }
                 },
             });
         },

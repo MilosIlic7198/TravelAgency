@@ -19,25 +19,25 @@
             </div>
         </div>
         <div class="form-check m-2">
-            <input class="form-check-input" type="checkbox" value="Admin" id="adminCheck" :checked="roles[0] == 'Admin' ||
-                roles[1] == 'Admin' ||
-                roles[2] == 'Admin'
+            <input class="form-check-input" type="checkbox" value="Admin" id="adminCheck" :checked="person.role[0] == 'Admin' ||
+                person.role[1] == 'Admin' ||
+                person.role[2] == 'Admin'
                 " />
             <label class="form-check-label" for="adminCheck"> Admin </label>
         </div>
         <div class="form-check m-2">
-            <input class="form-check-input" type="checkbox" value="Moderator" id="moderatorCheck" :checked="roles[0] == 'Moderator' ||
-                roles[1] == 'Moderator' ||
-                roles[2] == 'Moderator'
+            <input class="form-check-input" type="checkbox" value="Moderator" id="moderatorCheck" :checked="person.role[0] == 'Moderator' ||
+                person.role[1] == 'Moderator' ||
+                person.role[2] == 'Moderator'
                 " />
             <label class="form-check-label" for="moderatorCheck">
                 Moderator
             </label>
         </div>
         <div class="form-check m-2">
-            <input class="form-check-input" type="checkbox" value="User" id="userCheck" :checked="roles[0] == 'User' ||
-                roles[1] == 'User' ||
-                roles[2] == 'User'
+            <input class="form-check-input" type="checkbox" value="User" id="userCheck" :checked="person.role[0] == 'User' ||
+                person.role[1] == 'User' ||
+                person.role[2] == 'User'
                 " />
             <label class="form-check-label" for="userCheck"> User </label>
         </div>
@@ -55,14 +55,17 @@
 <script>
 import $ from "jquery";
 export default {
-    props: ["id"],
+    props: ["user"],
+    setup(props) {
+        props.user.role = props.user.role.split(",");
+    },
     data() {
         return {
             success: "",
             error: "",
-            person: {},
+            person: this.user,
             newPassword: "",
-            roles: [],
+            newRoles: [],
         };
     },
     methods: {
@@ -90,22 +93,6 @@ export default {
             );
             return passRegexp.test(pass);
         },
-        getPerson() {
-            axios
-                .get(`/get-person/${this.id}`)
-                .then((res) => {
-                    if (res.status == 200) {
-                        console.log(res.data);
-                        this.person.id = res.data.id;
-                        this.person.email = res.data.email;
-                        this.roles = res.data.roles;
-                    }
-                })
-                .catch((err) => {
-                    console.log(err.response.data.error);
-                    this.displayError(err.response.data.error);
-                });
-        },
         save() {
             if (!this.validateEmail(this.person.email)) {
                 this.displayError("Invalid Email!");
@@ -122,27 +109,26 @@ export default {
                 }
                 editedData.newPassword = this.newPassword;
             }
-            let newRoles = [];
             let adminBox = document.getElementById("adminCheck");
             let moderatorBox = document.getElementById("moderatorCheck");
             let userBox = document.getElementById("userCheck");
 
             if (adminBox.checked) {
-                newRoles.push("Admin");
+                this.newRoles.push("Admin");
             }
             if (moderatorBox.checked) {
-                newRoles.push("Moderator");
+                this.newRoles.push("Moderator");
             }
             if (userBox.checked) {
-                newRoles.push("User");
+                this.newRoles.push("User");
             }
-            if (newRoles.length == 0) {
+            if (this.newRoles.length == 0) {
                 this.displayError("You must have one role checked!");
                 return;
             }
-            editedData.roles = newRoles;
+            editedData.roles = this.newRoles;
             axios
-                .post(`/edit-person/${this.id}`, editedData)
+                .post(`/edit-person/${this.person.id}`, editedData)
                 .then((res) => {
                     if (res.status == 200) {
                         console.log(res.data.message);
@@ -151,13 +137,11 @@ export default {
                     }
                 })
                 .catch((err) => {
+                    this.newRoles = [];
                     console.log(err.response.data.error);
                     this.displayError(err.response.data.error);
                 });
         },
-    },
-    mounted() {
-        this.getPerson();
     },
 };
 </script>

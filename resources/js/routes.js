@@ -8,7 +8,6 @@ import EditBlog from "./components/EditBlog";
 import NewBlog from "./components/NewBlog";
 import Users from "./components/Users";
 import Register from "./components/Register";
-import EditUser from "./components/EditUser";
 import InsurancePolicies from "./components/InsurancePolicies";
 import Participants from "./components/Participants";
 
@@ -64,11 +63,6 @@ export default {
             path: "/register",
             component: Register,
             name: "Register",
-        },
-        {
-            path: "/edit-user/:id",
-            component: EditUser,
-            name: "EditUser",
         },
         {
             path: "/insurance-policies",

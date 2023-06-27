@@ -47,12 +47,13 @@ export default {
                 {
                     data: null,
                     render: function (data, type, row, meta) {
+                        const jsonRow = JSON.stringify(row);
                         return `<div class="dropdown">
                             <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Actions!
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item editUser" type="button" data-id=${data.id}>Edit</a></li>
+                                    <li><a class="dropdown-item editUser" type="button" data-user=${jsonRow}>Edit</a></li>
                                     <li><a class="dropdown-item deleteUser" type="button" data-id=${data.id}>Delete</a></li>
                                 </ul>
                             </div>`;
@@ -64,8 +65,8 @@ export default {
         };
     },
     methods: {
-        editUserModal(id) {
-            this.$modal.show(EditUser, { id: id });
+        editUserModal(user) {
+            this.$modal.show(EditUser, { user: user });
         },
         deleteUser(id) {
             axios
@@ -142,7 +143,8 @@ export default {
             let body = $(document);
             body.on("click", ".editUser", function (e) {
                 e.preventDefault();
-                table.editUserModal(e.target.dataset.id);
+                const user = JSON.parse(e.target.dataset.user);
+                table.editUserModal(user);
             });
             body.on("click", ".deleteUser", function (e) {
                 e.preventDefault();
