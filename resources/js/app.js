@@ -1,6 +1,6 @@
 require("./bootstrap");
 
-window.Vue = require("vue").default;
+import Vue from 'vue';
 
 Vue.component("app-component", require("./components/app.vue").default);
 
@@ -21,6 +21,5 @@ Vue.use(VModal, {
 });
 
 const app = new Vue({
-    el: "#app",
     router: new VueRouter(routes),
-});
+}).$mount('#app');

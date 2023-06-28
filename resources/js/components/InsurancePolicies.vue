@@ -6,16 +6,12 @@
         <div v-if="success.length" class="alert alert-success m-2" role="alert">
             {{ success }}
         </div>
-        <form class="form-inline m-2">
-            <div class="form-group">
-                <label for="forDateFrom" class="d-block text-lg">Date From:</label>
-                <date-picker type="date" v-model="dateFrom" format="DD.MM.YYYY"></date-picker>
-            </div>
-            <div class="form-group">
-                <label for="forDateTo" class="d-block text-lg">Date to:</label>
-                <date-picker type="date" v-model="dateTo" format="DD.MM.YYYY"></date-picker>
-            </div>
-        </form>
+        <div class="my-2">
+            <label for="forDateFrom" class="d-block text-lg">Date From:</label>
+            <date-picker type="date" v-model="dateFrom" format="DD.MM.YYYY"></date-picker>
+            <label for="forDateTo" class="d-block text-lg">Date To:</label>
+            <date-picker type="date" v-model="dateTo" format="DD.MM.YYYY"></date-picker>
+        </div>
         <table class="table" id="datatablePolicies">
             <thead>
                 <tr>
@@ -124,36 +120,25 @@ export default {
     },
     watch: {
         dateFromAndDateTo(newVal, oldVal) {
-            const [oldDateFrom, oldDateTo] = oldVal.split('|');
-            const [newDateFrom, newDateTo] = newVal.split('|');
+            const [oldFromVal, oldToVal] = oldVal.split('|');
+            const [newFromVal, newToVal] = newVal.split('|');
 
-            if (oldDateFrom == '' && oldDateTo == '') {
-                return;
-            }
-            if (newDateFrom == '' || newDateTo == '') {
+            if (newFromVal == "null") {
                 this.newDateFrom = "";
+                this.drawTable();
+                return;
+            } else {
+                this.newDateFrom = moment(newFromVal).format("YYYY-MM-DD");
+                this.drawTable();
+            }
+            if (newToVal == "null") {
                 this.newDateTo = "";
                 this.drawTable();
                 return;
-            }
-            if (newDateFrom == "null" || newDateTo == "null") {
-                this.newDateFrom = "";
-                this.newDateTo = "";
+            } else {
+                this.newDateTo = moment(newToVal).format("YYYY-MM-DD");
                 this.drawTable();
-                return;
             }
-            if (moment(newDateFrom).isSameOrAfter(newDateTo)) {
-                this.displayError("You cannot set date from to be after date to!");
-                this.dateFrom = "";
-                this.dateTo = "";
-                this.newDateFrom = "";
-                this.newDateTo = "";
-                this.drawTable();
-                return;
-            }
-            this.newDateFrom = moment(this.dateFrom).format("YYYY-MM-DD");
-            this.newDateTo = moment(this.dateTo).format("YYYY-MM-DD");
-            this.drawTable();
         }
     },
     methods: {

@@ -27,19 +27,22 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <router-link class="dropdown-item" to="/blogs">
+                                    <a class="dropdown-item" :href="$router.resolve({ name: 'Blogs' }).href">Blogs</a>
+                                    <!-- <router-link class="dropdown-item" to="/blogs">
                                         Blogs
-                                    </router-link>
+                                    </router-link> -->
                                 </li>
-                                <li>
-                                    <router-link class="dropdown-item" to="/users">
+                                <li><a class="dropdown-item" :href="$router.resolve({ name: 'Users' }).href">Users</a>
+                                    <!-- <router-link class="dropdown-item" to="/users">
                                         Users
-                                    </router-link>
+                                    </router-link> -->
                                 </li>
                                 <li>
-                                    <router-link class="dropdown-item" to="/insurance-policies">
+                                    <a class="dropdown-item"
+                                        :href="$router.resolve({ name: 'InsurancePolicies' }).href">Insurance Policies</a>
+                                    <!--  <router-link class="dropdown-item" to="/insurance-policies">
                                         Insurance Policies
-                                    </router-link>
+                                    </router-link> -->
                                 </li>
                             </ul>
                         </li>
@@ -57,7 +60,7 @@
             </div>
         </nav>
         <div class="container d-flex justify-content-center">
-            <router-view @personLoggedIn="loggedIn" :key="$route.fullPath"></router-view>
+            <router-view @personLoggedIn="loggedIn" />
         </div>
     </div>
 </template>
