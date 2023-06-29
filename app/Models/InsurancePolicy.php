@@ -46,17 +46,17 @@ class InsurancePolicy extends Model
         }
         if ((!empty($from) && $from != "Invalid date") && (!empty($to) && $to != "Invalid date")) {
             $filters = $filters->whereRaw(
-                "(insurance_policy.date_from >= '{$from}' AND insurance_policy.date_to <= '{$to}')"
+                "((insurance_policy.date_from >= '{$from}' OR insurance_policy.date_to >= '{$from}') AND (insurance_policy.date_to <= '{$to}' OR insurance_policy.date_from <= '{$to}'))"
             );
         }
         if ((!empty($from) && $from != "Invalid date") && ($to == "Invalid date" || empty($to))) {
             $filters = $filters->whereRaw(
-                "(insurance_policy.date_from >= '{$from}' OR (insurance_policy.date_to >= '{$from}'))"
+                "(insurance_policy.date_from >= '{$from}' OR insurance_policy.date_to >= '{$from}')"
             );
         }
         if ((!empty($to) && $to != "Invalid date") && ($from == "Invalid date" || empty($from))) {
             $filters = $filters->whereRaw(
-                "(insurance_policy.date_to <= '{$to}' OR (insurance_policy.date_from <= '{$to}'))"
+                "(insurance_policy.date_to <= '{$to}' OR insurance_policy.date_from <= '{$to}')"
             );
         }
         $filterNum = $filters->get();
