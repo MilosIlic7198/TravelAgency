@@ -1,8 +1,6 @@
 # TravelAgency
 
-## Overview
-
-This project is a web application built with Laravel for the backend and Vue.js for the frontend. It provides functionalities for managing insurance policies for family trips, blogging, and user authentication with role-based access control. The application leverages several modern technologies and libraries.
+A travel agency app for managing insurance policies of family trips with blogging capabilities. The app leverages several modern technologies and libraries.
 
 ## Features
 
